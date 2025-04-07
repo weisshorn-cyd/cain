@@ -1,0 +1,100 @@
+name: Release
+
+on:
+  pull_request:
+    types: [closed]
+
+permissions:
+  packages: write
+
+jobs:
+  go-release:
+    name: Release images
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        go-version: ['stable']
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions-ecosystem/action-release-label@v1
+        id: release-label
+        if: ${{ github.event.pull_request.merged == true }}
+
+      - uses: actions-ecosystem/action-get-latest-tag@v1
+        id: get-latest-tag
+        if: ${{ steps.release-label.outputs.level != null }}
+        with:
+          semver_only: true
+          initial_version: v0.1.0
+
+      - uses: actions-ecosystem/action-bump-semver@v1
+        id: bump-semver
+        if: ${{ steps.release-label.outputs.level != null }}
+        with:
+          current_version: ${{ steps.get-latest-tag.outputs.tag }}
+          level: ${{ steps.release-label.outputs.level }}
+
+      - uses: actions-ecosystem/action-push-tag@v1
+        if: ${{ steps.release-label.outputs.level != null }}
+        with:
+          tag: ${{ steps.bump-semver.outputs.new_version }}
+          message: 'CAIn ${{ steps.bump-semver.outputs.new_version }}: PR #${{ github.event.pull_request.number }} ${{ github.event.pull_request.title }}'
+
+      - name: Set up Go
+        uses: actions/setup-go@v5
+        with:
+          go-version: ${{ matrix.go-version }}
+          check-latest: true
+      - name: Container registry login
+        run: |
+          echo "${{ github.token }}" | ko login ghcr.io --username "cain" --password-stdin
+
+      - name: Publish ko image
+        env:
+          VERSION: ${{ steps.bump-semver.outputs.new_version }}
+        run: |
+          make publish
+
+      - name: Publish init images
+        env:
+          VERSION: ${{ steps.bump-semver.outputs.new_version }}
+        run: |
+          make all-init
+  helm-release:
+    name: Release chart
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions-ecosystem/action-release-label@v1
+        id: release-label
+        if: ${{ github.event.pull_request.merged == true }}
+        with:
+          label_prefix: chart/
+      - uses: WyriHaximus/github-action-get-previous-tag@v1.4.0
+        id: get-previous-tag
+        if: ${{ steps.release-label.outputs.level != null }}
+        with:
+          prefix: chart/
+          fallback: 0.1.0
+      - uses: actions-ecosystem/action-bump-semver@v1
+        id: bump-semver
+        if: ${{ steps.release-label.outputs.level != null }}
+        with:
+          current_version: ${{ steps.get-previous-tag.outputs.tag }}
+          level: ${{ steps.release-label.outputs.level }}
+
+      - uses: actions-ecosystem/action-push-tag@v1
+        if: ${{ steps.release-label.outputs.level != null }}
+        with:
+          tag: ${{ steps.bump-semver.outputs.new_version }}
+          message: 'CAIn Chart ${{ steps.bump-semver.outputs.new_version }}: PR #${{ github.event.pull_request.number }} ${{ github.event.pull_request.title }}'
+      - name: Container registry login
+        run: |
+          echo "${{ github.token }}" | ko login ghcr.io --username "cain" --password-stdin
+      - name: Publish Helm chart
+        env:
+          CHART_VERSION: ${{ steps.bump-semver.outputs.new_version }}
+        run: |
+          make publish-chart

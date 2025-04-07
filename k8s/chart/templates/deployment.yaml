@@ -1,0 +1,91 @@
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: {{ include "ca-injector.name" . }}-svc
+  namespace: {{ .Release.Namespace }}
+  labels:
+    {{- include "ca-injector.labels" (dict "context" . "component" "webhook") | nindent 4 }}
+spec:
+  selector:
+    {{- include "ca-injector.selectorLabels" (dict "context" . "component" "webhook") | nindent 4 }}
+  ports:
+    - port: 443
+      targetPort: webhook-api
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ include "ca-injector.name" . }}
+  namespace: {{ .Release.Namespace }}
+  labels:
+    {{- include "ca-injector.labels" (dict "context" . "component" "webhook") | nindent 4 }}
+spec:
+  replicas: {{ .Values.replicas }}
+  selector:
+    matchLabels:
+      {{- include "ca-injector.selectorLabels" (dict "context" . "component" "webhook") | nindent 6 }}
+  template:
+    metadata:
+      labels:
+        {{- include "ca-injector.labels" (dict "context" . "component" "webhook") | nindent 8 }}
+    spec:
+      affinity:
+        podAntiAffinity:
+          requiredDuringSchedulingIgnoredDuringExecution:
+            - labelSelector:
+                matchLabels:
+                  app.kubernetes.io/instance: {{ include "ca-injector.name" . }}
+              topologyKey: kubernetes.io/hostname
+      serviceAccountName: "{{ include "ca-injector.serviceAccountName" . }}"
+      {{- with .Values.imagePullSecrets }}
+      imagePullSecrets:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      containers:
+      - name: webhook
+        image: {{ .Values.images.webhook }}:{{ include "ca-injector.defaultTag" . }}
+        ports:
+        - containerPort: 8443
+          name: webhook-api
+        - containerPort: 8080
+          name: metrics
+        volumeMounts:
+        - name: webhook-tls-certs
+          mountPath: /run/secrets/tls
+          readOnly: true
+        env:
+          - name: TLS_CERT_FILE
+            value: /run/secrets/tls/tls.crt
+          - name: TLS_KEY_FILE
+            value: /run/secrets/tls/tls.key
+          - name: METADATA_DOMAIN
+            value: "{{ .Values.metadataDomain }}"
+          - name: CA_SECRET
+            value: {{ include "ca-injector.name" . }}-tls-cert/ca.crt
+          - name: TRUSTSTORE_PASSWORD
+            value: "{{ .Values.truststorePassword }}"
+          - name: JVM_ENV_VAR
+            value: "{{ .Values.jvmEnvVar }}"
+          - name: REDHAT_INIT_IMAGE
+            value: {{ .Values.images.redhatInit }}
+          - name: REDHAT_INIT_TAG
+            value: {{ include "ca-injector.defaultTag" . }}
+          - name: DEBIAN_INIT_IMAGE
+            value: {{ .Values.images.debianInit}}
+          - name: DEBIAN_INIT_TAG
+            value: {{ include "ca-injector.defaultTag" . }}
+          - namne: CPU_REQUEST
+            value: {{ .Values.resources.requests.cpu }}
+          - namne: MEM_REQUEST
+            value: {{ .Values.resources.requests.memory }}
+          - namne: CPU_LIMIT
+            value: {{ .Values.resources.limits.cpu }}
+          - namne: MEM_LIMIT
+            value: {{ .Values.resources.limits.memory }}
+      volumes:
+      - name: webhook-tls-certs
+        secret:
+          secretName: {{ include "ca-injector.name" . }}-tls-cert
+          defaultMode: 420
+

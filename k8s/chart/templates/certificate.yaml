@@ -1,0 +1,17 @@
+---
+apiVersion: cert-manager.io/v1
+kind: Certificate
+metadata:
+  name: {{ include "ca-injector.name" . }}-tls-cert
+  namespace: {{ .Release.Namespace }}
+  labels:
+    {{- include "ca-injector.labels" (dict "context" . "component" "webhook") | nindent 4 }}
+spec:
+  secretName: {{ include "ca-injector.name" . }}-tls-cert
+  dnsNames:
+    - "{{ include "ca-injector.name" . }}-svc"
+    - "{{ include "ca-injector.name" . }}-svc.{{ .Release.Namespace }}"
+    - "{{ include "ca-injector.name" . }}-svc.{{ .Release.Namespace }}.svc"
+  issuerRef:
+    name: {{ .Values.certManager.issuerRef }}
+    kind: ClusterIssuer

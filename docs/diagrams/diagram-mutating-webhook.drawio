@@ -1,0 +1,77 @@
+<mxfile host="app.diagrams.net" agent="Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/135.0.0.0 Safari/537.36" version="26.2.14">
+  <diagram id="VSMmOakG7HgEaBmrVLPr" name="Page-1">
+    <mxGraphModel dx="1053" dy="656" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="827" pageHeight="1169" math="0" shadow="0">
+      <root>
+        <mxCell id="0" />
+        <mxCell id="1" parent="0" />
+        <mxCell id="byd_hMHjK4NzhJd2uJQ8-5" value="2. Pod with&lt;br&gt;cain label" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;" parent="1" source="byd_hMHjK4NzhJd2uJQ8-1" target="byd_hMHjK4NzhJd2uJQ8-4" edge="1">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="byd_hMHjK4NzhJd2uJQ8-8" value="6. Schedule&lt;br&gt;the modified Pod" style="rounded=0;orthogonalLoop=1;jettySize=auto;html=1;exitX=0;exitY=1;exitDx=0;exitDy=0;entryX=0.5;entryY=0;entryDx=0;entryDy=0;" parent="1" source="byd_hMHjK4NzhJd2uJQ8-1" target="byd_hMHjK4NzhJd2uJQ8-9" edge="1">
+          <mxGeometry relative="1" as="geometry">
+            <mxPoint x="227.64411764705878" y="150" as="targetPoint" />
+            <mxPoint x="252.34999999999988" y="79.99999999999994" as="sourcePoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="SXQcfhzi7yLFFqsazdvL-3" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;exitX=0.75;exitY=1;exitDx=0;exitDy=0;entryX=0.5;entryY=0;entryDx=0;entryDy=0;" parent="1" source="byd_hMHjK4NzhJd2uJQ8-1" target="SXQcfhzi7yLFFqsazdvL-1" edge="1">
+          <mxGeometry relative="1" as="geometry">
+            <mxPoint x="510" y="130" as="targetPoint" />
+            <Array as="points">
+              <mxPoint x="330" y="130" />
+              <mxPoint x="475" y="130" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="SXQcfhzi7yLFFqsazdvL-4" value="4. Patched pod" style="edgeLabel;html=1;align=center;verticalAlign=middle;resizable=0;points=[];" parent="SXQcfhzi7yLFFqsazdvL-3" vertex="1" connectable="0">
+          <mxGeometry x="-0.1223" y="1" relative="1" as="geometry">
+            <mxPoint as="offset" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="byd_hMHjK4NzhJd2uJQ8-1" value="k8s control plane" style="rounded=0;whiteSpace=wrap;html=1;" parent="1" vertex="1">
+          <mxGeometry x="240" y="40" width="120" height="40" as="geometry" />
+        </mxCell>
+        <mxCell id="byd_hMHjK4NzhJd2uJQ8-3" value="1. kubectl apply" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;" parent="1" source="byd_hMHjK4NzhJd2uJQ8-2" target="byd_hMHjK4NzhJd2uJQ8-1" edge="1">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="byd_hMHjK4NzhJd2uJQ8-2" value="" style="shape=actor;whiteSpace=wrap;html=1;" parent="1" vertex="1">
+          <mxGeometry x="70" y="30" width="40" height="60" as="geometry" />
+        </mxCell>
+        <mxCell id="byd_hMHjK4NzhJd2uJQ8-7" value="3. Patch the Pod" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;" parent="1" source="byd_hMHjK4NzhJd2uJQ8-4" edge="1">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="540" y="110" />
+              <mxPoint x="350" y="110" />
+              <mxPoint x="350" y="80" />
+            </Array>
+            <mxPoint x="350" y="80" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="byd_hMHjK4NzhJd2uJQ8-4" value="cain&lt;br&gt;mutating webhook" style="rounded=0;whiteSpace=wrap;html=1;" parent="1" vertex="1">
+          <mxGeometry x="480" y="30" width="120" height="60" as="geometry" />
+        </mxCell>
+        <mxCell id="byd_hMHjK4NzhJd2uJQ8-6" value="- Check that injection is enabled using the label&lt;br&gt;- Get the container family from the annotation&lt;br&gt;&amp;nbsp;(debian, redhat), python or JVM injection or extra CA secrets&lt;br&gt;- Generate patch to add cain and required mounts to the Pod" style="text;html=1;strokeColor=none;fillColor=none;align=left;verticalAlign=top;whiteSpace=wrap;rounded=0;" parent="1" vertex="1">
+          <mxGeometry x="610" y="30" width="230" height="160" as="geometry" />
+        </mxCell>
+        <mxCell id="byd_hMHjK4NzhJd2uJQ8-9" value="kubelet" style="rounded=0;whiteSpace=wrap;html=1;align=center;verticalAlign=middle;" parent="1" vertex="1">
+          <mxGeometry x="200" y="150" width="80" height="30" as="geometry" />
+        </mxCell>
+        <mxCell id="SXQcfhzi7yLFFqsazdvL-6" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;exitX=0;exitY=0.5;exitDx=0;exitDy=0;entryX=0.452;entryY=0.981;entryDx=0;entryDy=0;entryPerimeter=0;" parent="1" source="SXQcfhzi7yLFFqsazdvL-1" target="byd_hMHjK4NzhJd2uJQ8-1" edge="1">
+          <mxGeometry relative="1" as="geometry">
+            <mxPoint x="290" y="120" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="SXQcfhzi7yLFFqsazdvL-7" value="5. Create additional&lt;br&gt;ressources" style="edgeLabel;html=1;align=center;verticalAlign=middle;resizable=0;points=[];" parent="SXQcfhzi7yLFFqsazdvL-6" vertex="1" connectable="0">
+          <mxGeometry x="-0.3058" relative="1" as="geometry">
+            <mxPoint as="offset" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="SXQcfhzi7yLFFqsazdvL-1" value="cain&lt;br&gt;validating webhook" style="rounded=0;whiteSpace=wrap;html=1;" parent="1" vertex="1">
+          <mxGeometry x="415" y="150" width="120" height="60" as="geometry" />
+        </mxCell>
+        <mxCell id="SXQcfhzi7yLFFqsazdvL-2" value="- Check that injection is enabled using the label&lt;br&gt;- Create the required secrets and/or certificates" style="text;html=1;strokeColor=none;fillColor=none;align=left;verticalAlign=top;whiteSpace=wrap;rounded=0;" parent="1" vertex="1">
+          <mxGeometry x="360" y="210" width="230" height="70" as="geometry" />
+        </mxCell>
+      </root>
+    </mxGraphModel>
+  </diagram>
+</mxfile>
