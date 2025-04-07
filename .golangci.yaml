@@ -1,0 +1,115 @@
+version: "2"
+run:
+  modules-download-mode: readonly
+linters:
+  default: all
+  disable:
+    - maintidx
+  settings:
+    exhaustruct:
+      exclude:
+        - 'net/http\.Server'
+        - 'crypto/tls\.Config'
+        - 'github\.com/cert-manager/cert-manager/pkg/apis/.*'
+        - 'github\.com/slok/kubewebhook/v2/pkg/webhook/mutating\.MutatorResult'
+        - 'github\.com/slok/kubewebhook/v2/pkg/webhook/validating\.ValidatorResult'
+        - 'github\.com/slok/kubewebhook/v2/pkg/model\.AdmissionReview'
+        - 'github\.com/prometheus/client_golang/prometheus\.CounterOpts'
+        - 'github\.com/prometheus/client_golang/prometheus/promhttp\.HandlerOpts'
+        - 'k8s\.io/api/core/v1.*'
+        - 'k8s\.io/api/apps/v1.*'
+        - 'k8s\.io/apimachinery/pkg/apis/.*'
+    funlen:
+      lines: 120
+      statements: 70
+    lll:
+      line-length: 135
+    nolintlint:
+      require-explanation: true
+      require-specific: true
+    paralleltest:
+      ignore-missing: true
+    varnamelen:
+      max-distance: 10
+      ignore-names:
+        - err
+        - wg
+        - ch
+        - in
+        - out
+        - tt
+    depguard:
+      rules:
+        main:
+          list-mode: strict
+          files:
+            - $all
+          allow:
+            - $gostd
+            - github.com/kelseyhightower/envconfig
+            - github.com/prometheus/client_golang
+            - github.com/prometheus/common
+            - github.com/slok/kubewebhook/v2
+            - github.com/sourcegraph/conc/pool
+            - k8s.io/apimachinery
+            - k8s.io/client-go/rest
+            - k8s.io/api/core/v1
+            - k8s.io/api/apps/v1
+            - k8s.io/client-go/kubernete
+            - github.com/weisshorn-cyd/cain
+            - github.com/cert-manager/cert-manager/pkg/apis
+            - github.com/cert-manager/cert-manager/pkg/client/clientset/versioned
+            - github.com/fsnotify/fsnotify
+            - github.com/matryer/is
+          deny:
+            - pkg: io/ioutil
+              desc: replaced by io and os packages
+            - pkg: "math/rand$"
+              desc: use math/rand/v2
+            - pkg: "github.com/sirupsen/logrus"
+              desc: not allowed
+            - pkg: "github.com/pkg/errors"
+              desc: Should be replaced by standard lib errors package
+  exclusions:
+    generated: lax
+    presets:
+      - comments
+      - common-false-positives
+      - legacy
+      - std-error-handling
+    rules:
+      - linters:
+          - dupl
+          - funlen
+          - gochecknoglobals
+        path: _test\.go
+      - linters:
+          - lll
+        source: "//nolint"
+      - linters:
+          - lll
+        source: "`.*envconfig.*`$"
+    paths:
+      - third_party$
+      - builtin$
+      - examples$
+formatters:
+  enable:
+    - gci
+    - gofmt
+    - gofumpt
+    - goimports
+  settings:
+    gci:
+      sections:
+        - standard
+        - default
+        - prefix(github.com/weisshorn-cyd/cain)
+        - blank
+        - dot
+  exclusions:
+    generated: lax
+    paths:
+      - third_party$
+      - builtin$
+      - examples$

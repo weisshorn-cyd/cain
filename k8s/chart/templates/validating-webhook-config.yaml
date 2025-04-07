@@ -1,0 +1,40 @@
+apiVersion: admissionregistration.k8s.io/v1
+kind: ValidatingWebhookConfiguration
+metadata:
+  name: {{ include "ca-injector.name" . }}-validating
+  annotations:
+    cert-manager.io/inject-ca-from: {{ .Release.Namespace }}/{{ include "ca-injector.name" . }}-tls-cert
+  labels:
+    {{- include "ca-injector.labels" (dict "context" . "component" "webhook") | nindent 4 }}
+webhooks:
+  - name: {{ include "ca-injector.name" . }}-svc.{{ .Release.Namespace }}.svc
+    admissionReviewVersions: ["v1"]
+    clientConfig:
+      service:
+        name: {{ include "ca-injector.name" . }}-svc
+        namespace: {{ .Release.Namespace }}
+        path: "/inject/validate"
+    failurePolicy: Fail
+    matchPolicy: Equivalent
+    namespaceSelector:
+      matchExpressions:
+      - key: name
+        operator: NotIn
+        values: ["kube-system"]
+      - key: kubernetes.io/metadata.name
+        operator: NotIn
+        values: ["kube-system"]
+    objectSelector:
+      matchExpressions:
+      - key: ca-injector.{{ .Values.metadataDomain }}/enabled
+        operator: Exists
+    rules:
+      - operations:
+          - "CREATE"
+          - "DELETE"
+        scope: "Namespaced"
+        apiGroups: [""]
+        apiVersions: ["v1"]
+        resources: ["pods"]
+    sideEffects: NoneOnDryRun
+

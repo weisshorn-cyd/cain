@@ -1,0 +1,16 @@
+defaultBaseImage: cgr.dev/chainguard/static
+
+defaultFlags:
+  - -trimpath
+  - -tags
+  - netgo
+defaultLdflags:
+  - -s -w
+  - -X github.com/prometheus/common/version.Version={{ .Git.Tag }}
+  - -X github.com/prometheus/common/version.Revision={{ .Git.FullCommit }}
+  - -X github.com/prometheus/common/version.Branch={{ .Git.Branch }}
+  - -X github.com/prometheus/common/version.BuildUser=ko
+  - -X github.com/prometheus/common/version.BuildDate={{ .Date }}
+
+defaultPlatforms:
+  - all

@@ -1,0 +1,34 @@
+# Default values for ca-injector
+# This is a YAML-formatted file.
+# Declare variables to be passed into your templates.
+
+# -- Provide a name in place of `ca-injector`
+nameOverride: ""
+# -- Provide a image tag in place of 'appVersion'
+tagOverride: ""
+
+images:
+  webhook: ca-injector-webhook
+  redhatInit: ca-injector-redhat-init
+  debianInit: ca-injector-debian-init
+
+metadataDomain: "ca-injector"
+truststorePassword: "injected-ca"
+jvmEnvVar: "JAVA_OPTS_CUSTOM"
+
+resources:
+  limits:
+    cpu: "500m"
+    memory: "50Mi"
+  requests:
+    cpu: "500m"
+    memory: "50Mi"
+
+replicas: 1
+
+certManager:
+  issuerRef: ca-issuer
+
+# -- If defined, uses a Secret to pull an image from a private Docker registry or repository.
+# @default -- `[]`
+imagePullSecrets: []
