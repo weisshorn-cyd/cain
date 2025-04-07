@@ -1,0 +1,31 @@
+apiVersion: v2
+name: cain
+description: A Helm chart for Cain (CA Injector) webhook
+maintainers:
+  - name: Owen McGill
+    email: mcgillowen@gmail.com
+
+sources:
+  - https://github.com/weisshorn-cyd/cain
+
+keywords:
+  - certificate authority
+  - webhook
+
+
+annotations:
+  artifacthub.io/alternativeName: ca-injector
+  artifacthub.io/category: security
+  artifacthub.io/license: MIT
+  artifacthub.io/maintainers: |
+    - name: Owen McGill
+      email: mcgillowen@gmail.com
+
+
+type: application
+
+kubeVersion: ">= 1.21.0-0"
+
+version: 0.0.0
+
+appVersion: v0.0.0

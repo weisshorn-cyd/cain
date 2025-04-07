@@ -1,0 +1,106 @@
+# Default values for cain.
+# This is a YAML-formatted file.
+# Declare variables to be passed into your templates.
+
+# This is for the secrets for pulling an image from a private repository, more information can be found here: https://kubernetes.io/docs/tasks/configure-pod-container/pull-image-private-registry/
+imagePullSecrets: []
+
+replicaCount: 1
+
+image:
+  repository: ghcr.io/weisshorn-cyd/cain
+  pullPolicy: IfNotPresent
+  # Overrides the image tag whose default is the chart appVersion.
+  tag: ""
+
+redhatInitImage:
+  repository: ghcr.io/weisshorn-cyd/cain-redhat-init
+  # Overrides the image tag whose default is the chart appVersion.
+  tag: ""
+
+debianInitImage:
+  repository: ghcr.io/weisshorn-cyd/cain-debian-init
+  # Overrides the image tag whose default is the chart appVersion.
+  tag: ""
+
+nameOverride: ""
+fullnameOverride: ""
+
+resources:
+  limits:
+    cpu: 1000m
+    memory: 512Mi
+  requests:
+    cpu: 100m
+    memory: 512Mi
+
+caInjectionInitcontainer:
+  resources:
+    limits:
+      cpu: 500m
+      memory: 50Mi
+    requests:
+      cpu: ""
+      memory: ""
+
+config:
+  metadataDomain: "weisshorn.cyd"
+  jvmEnvVar: "JAVA_OPTS_CUSTOM"
+  injectorIssuer: "cert-issuer"
+  truststorePassword: "injected-ca"
+  logLevel: info
+
+containerPort: 8443
+metricsPort: 8080
+
+caSecret:
+  name: inject-ca
+  key: ca.crt
+
+serviceAccount:
+  # Annotations to add to the service account
+  annotations: {}
+  # The name of the service account to use.
+  # If not set and create is true, a name is generated using the fullname template
+  name: ""
+
+podAnnotations: {}
+
+# ExternalSecret configuration instead of a dummy certificate.
+# External secrets operator needs to be available and have a
+# secret store configured.
+externalSecret: {}
+#  secretStore:
+#    name: ""
+#    clusterScoped: false
+#  remoteRef:
+#    key: ""
+#    property: ""
+
+dummyCertificate:
+  domainName: cain.weisshorn.cyd
+  issuer:
+    kind: ClusterIssuer
+    name: cert-issuer
+
+externalIssuer: {}
+#  kind: ClusterIssuer
+#  name: internal-ca-issuer
+
+
+# This is for generating/creating extra objects defined solely in the values file.
+# These objects are passed through the "tpl" function before being rendered to yaml, this
+# is to allow the use of helpers in the extra objects.
+# The extra objects receive the root scope as if they were normal template files.
+extraObjects: []
+# - |
+#   apiVersion: v1
+#   kind: ConfigMap
+#   metadata:
+#     name: {{ include "cain.fullname" (dict "root" $ "scope" .Values) }}
+#     namespace: {{ $.Release.Namespace }}
+#     labels:
+#       {{- include "cain.labels" (dict "root" $ "scope" .Values) | nindent 4 }}
+#   data:
+#     file.txt: |
+#       Hello, world!

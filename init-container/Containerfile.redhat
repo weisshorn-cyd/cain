@@ -1,0 +1,9 @@
+FROM --platform=$BUILDPLATFORM redhat/ubi8:8.5
+
+## add local (offline) mirrors and install ca-certificates
+RUN yum --disableplugin=subscription-manager -y install ca-certificates \
+  && yum --disableplugin=subscription-manager clean all
+
+USER root
+COPY entrypoint-redhat.sh /entrypoint
+ENTRYPOINT [ "/entrypoint" ]
