@@ -29,15 +29,15 @@ jobs:
       - name: Run chart-testing (list-changed)
         id: list-changed
         run: |
-          changed=$(ct list-changed --lint-conf ${{ github.workspace }}/ct.yaml --target-branch ${{ github.event.repository.default_branch }})
+          changed=$(ct list-changed --config ${{ github.workspace }}/ct.yaml --target-branch ${{ github.event.repository.default_branch }})
           if [[ -n "$changed" ]]; then
             echo "changed=true" >> "$GITHUB_OUTPUT"
           fi
       - name: Run chart-testing (lint)
-        run: ct lint --lint-conf ${{ github.workspace }}/ct.yaml --target-branch ${{ github.event.repository.default_branch }}
+        run: ct lint --config ${{ github.workspace }}/ct.yaml --target-branch ${{ github.event.repository.default_branch }}
       - name: Create kind cluster
         if: steps.list-changed.outputs.changed == 'true'
         uses: helm/kind-action@v1.12.0
       - name: Run chart-testing (install)
         if: steps.list-changed.outputs.changed == 'true'
-        run: ct install --lint-conf ${{ github.workspace }}/ct.yaml  --target-branch ${{ github.event.repository.default_branch }}
+        run: ct install --config ${{ github.workspace }}/ct.yaml  --target-branch ${{ github.event.repository.default_branch }}
