@@ -8,6 +8,11 @@ on:
       - '.golangci.yaml'
 
   pull_request:
+    paths:
+      - '**.go'
+      - 'go.mod'
+      - 'go.sum'
+      - '.golangci.yaml'
 
 permissions:
   contents: read
