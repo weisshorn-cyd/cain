@@ -72,8 +72,13 @@ jobs:
         if: ${{ github.event.pull_request.merged == true }}
         with:
           label_prefix: chart/
+      - uses: actions-ecosystem/action-get-latest-tag@v1
+        id: get-latest-image-tag
+        if: ${{ steps.release-label.outputs.level != null }}
+        with:
+          semver_only: true
       - uses: WyriHaximus/github-action-get-previous-tag@v1.4.0
-        id: get-previous-tag
+        id: get-previous-chart-tag
         if: ${{ steps.release-label.outputs.level != null }}
         with:
           prefix: chart/
@@ -82,19 +87,20 @@ jobs:
         id: bump-semver
         if: ${{ steps.release-label.outputs.level != null }}
         with:
-          current_version: ${{ steps.get-previous-tag.outputs.tag }}
+          current_version: ${{ steps.get-previous-chart-tag.outputs.tag }}
           level: ${{ steps.release-label.outputs.level }}
 
       - uses: actions-ecosystem/action-push-tag@v1
         if: ${{ steps.release-label.outputs.level != null }}
         with:
-          tag: ${{ steps.bump-semver.outputs.new_version }}
-          message: 'CAIn Chart ${{ steps.bump-semver.outputs.new_version }}: PR #${{ github.event.pull_request.number }} ${{ github.event.pull_request.title }}'
+          tag: chart/${{ steps.bump-semver.outputs.new_version }}
+          message: 'CAIn Chart chart/${{ steps.bump-semver.outputs.new_version }}: PR #${{ github.event.pull_request.number }} ${{ github.event.pull_request.title }}'
       - name: Container registry login
         run: |
           echo "${{ github.token }}" | ko login ghcr.io --username "cain" --password-stdin
       - name: Publish Helm chart
         env:
+          VERSION: ${{ steps.get-latest-image-tag.outputs.tag }}
           CHART_VERSION: ${{ steps.bump-semver.outputs.new_version }}
         run: |
           make publish-chart
