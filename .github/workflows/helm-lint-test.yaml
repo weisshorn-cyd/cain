@@ -38,6 +38,15 @@ jobs:
       - name: Create kind cluster
         if: steps.list-changed.outputs.changed == 'true'
         uses: helm/kind-action@v1.12.0
+      - uses: actions-ecosystem/action-get-latest-tag@v1
+        id: get-latest-image-tag
+        if: steps.list-changed.outputs.changed == 'true'
+        with:
+          semver_only: true
       - name: Run chart-testing (install)
         if: steps.list-changed.outputs.changed == 'true'
-        run: ct install --config ${{ github.workspace }}/ct.yaml  --target-branch ${{ github.event.repository.default_branch }}
+        run: |
+          ct install \
+          --config ${{ github.workspace }}/ct.yaml \
+          --helm-extra-set-args "--set=image.tag=${{ steps.get-latest-image-tag.outputs.tag }}" \
+          --target-branch ${{ github.event.repository.default_branch }}

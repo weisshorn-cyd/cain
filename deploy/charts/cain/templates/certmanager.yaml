@@ -1,13 +1,15 @@
-{{- if not .Values.externalIssuer }}
+{{- if .Capabilities.APIVersions.Has "cert-manager.io/v1" }}
+{{- if not .Values.externalIssuer -}}
 # Create a selfsigned Issuer, in order to create a root CA certificate for
 # signing webhook serving certificates
+---
 apiVersion: cert-manager.io/v1
 kind: Issuer
 metadata:
   name: {{ include "cain.selfSignedIssuer" . }}
   namespace: {{ .Release.Namespace | quote }}
   labels:
-    {{ include "cain.labels" . | nindent 4 }}
+    {{- include "cain.labels" . | nindent 4 }}
 spec:
   selfSigned: {}
 ---
@@ -18,7 +20,7 @@ metadata:
   name: {{ include "cain.rootCACertificate" . }}
   namespace: {{ .Release.Namespace | quote }}
   labels:
-    {{ include "cain.labels" . | nindent 4 }}
+    {{- include "cain.labels" . | nindent 4 }}
 spec:
   secretName: {{ include "cain.rootCACertificate" . }}
   duration: 43800h0m0s # 5y
@@ -34,8 +36,37 @@ metadata:
   name: {{ include "cain.rootCAIssuer" . }}
   namespace: {{ .Release.Namespace | quote }}
   labels:
-    {{ include "cain.labels" . | nindent 4 }}
+    {{- include "cain.labels" . | nindent 4 }}
 spec:
   ca:
     secretName: {{ include "cain.rootCACertificate" . }}
+{{- end -}}
+---
+# Finally, generate a serving certificate for the webhook to use
+apiVersion: cert-manager.io/v1
+kind: Certificate
+metadata:
+  name: {{ include "cain.servingCertificate" . }}
+  namespace: {{ .Release.Namespace | quote }}
+  labels:
+    {{ include "cain.labels" . | nindent 4 }}
+spec:
+  commonName: {{ include "cain.fullname" . }}
+  usages:
+    - server auth
+  duration: 8760h0m0s # 1y
+  dnsNames:
+    - {{ include "cain.fullname" . }}
+    - {{ include "cain.fullname" . }}.{{ .Release.Namespace }}
+    - {{ include "cain.fullname" . }}.{{ .Release.Namespace }}.svc
+  secretName: {{ include "cain.servingCertificate" . }}
+  issuerRef:
+    {{- if .Values.externalIssuer }}
+    {{- toYaml .Values.externalIssuer | nindent 4 }}
+    {{- else }}
+    kind: Issuer
+    name: {{ include "cain.rootCAIssuer" . }}
+    {{- end }}
+  privateKey:
+    size: 4096
 {{- end }}

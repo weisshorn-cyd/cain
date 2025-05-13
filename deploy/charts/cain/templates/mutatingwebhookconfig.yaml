@@ -1,9 +1,14 @@
+---
 apiVersion: admissionregistration.k8s.io/v1
 kind: MutatingWebhookConfiguration
 metadata:
   name: {{ include "cain.fullname" . }}
   annotations:
+    {{- if .Capabilities.APIVersions.Has "cert-manager.io/v1" -}}
     cert-manager.io/inject-ca-from: "{{ .Release.Namespace }}/{{ include "cain.servingCertificate" . }}"
+    {{- end -}}
+  labels:
+    {{- include "cain.labels" . | nindent 4 }}
 webhooks:
   - name: {{ include "cain.fullname" . }}.{{ .Release.Namespace }}.svc
     clientConfig:
