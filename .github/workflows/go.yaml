@@ -11,6 +11,10 @@ on:
       - 'deploy/charts/**'
       - 'init-container/**'
 
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
 jobs:
   go-test:
     runs-on: ubuntu-latest
