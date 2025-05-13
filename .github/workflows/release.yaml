@@ -28,7 +28,7 @@ jobs:
         if: ${{ steps.release-label.outputs.level != null }}
         with:
           semver_only: true
-          initial_version: v0.1.0
+          initial_version: v0.0.0
 
       - uses: actions-ecosystem/action-bump-semver@v1
         id: bump-semver
@@ -48,9 +48,12 @@ jobs:
         with:
           go-version: ${{ matrix.go-version }}
           check-latest: true
-      - name: Container registry login
-        run: |
-          echo "${{ github.token }}" | ko login ghcr.io --username "cain" --password-stdin
+      - name: Login to GitHub Container Registry
+        uses: docker/login-action@v3
+        with:
+          registry: ghcr.io
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
 
       - name: Publish ko image
         env:
@@ -84,7 +87,7 @@ jobs:
         if: ${{ steps.release-label.outputs.level != null }}
         with:
           prefix: chart/
-          fallback: 0.1.0
+          fallback: 0.0.0
       - uses: actions-ecosystem/action-bump-semver@v1
         id: bump-semver
         if: ${{ steps.release-label.outputs.level != null }}
@@ -97,9 +100,12 @@ jobs:
         with:
           tag: chart/${{ steps.bump-semver.outputs.new_version }}
           message: 'CAIn Chart chart/${{ steps.bump-semver.outputs.new_version }}: PR #${{ github.event.pull_request.number }} ${{ github.event.pull_request.title }}'
-      - name: Container registry login
-        run: |
-          echo "${{ github.token }}" | ko login ghcr.io --username "cain" --password-stdin
+      - name: Login to GitHub Container Registry
+        uses: docker/login-action@v3
+        with:
+          registry: ghcr.io
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
       - name: Publish Helm chart
         env:
           VERSION: ${{ steps.get-latest-image-tag.outputs.tag }}
