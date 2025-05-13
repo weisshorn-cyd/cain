@@ -1,6 +1,12 @@
 name: golangci-lint
 on:
   push:
+    paths:
+      - '**.go'
+      - 'go.mod'
+      - 'go.sum'
+      - '.golangci.yaml'
+
   pull_request:
 
 permissions:

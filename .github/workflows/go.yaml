@@ -2,6 +2,10 @@ name: Go
 
 on:
   push:
+    paths-ignore:
+      - 'deploy/charts/**'
+      - 'init-container/**'
+
   pull_request:
 
 jobs:
