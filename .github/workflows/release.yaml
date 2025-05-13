@@ -5,6 +5,8 @@ on:
     types: [closed]
 
 permissions:
+  contents: write
+  attestations: write
   packages: write
 
 jobs:
