@@ -2,7 +2,7 @@ apiVersion: v2
 name: cain
 description: A Helm chart for Cain (CA Injector) webhook
 maintainers:
-  - name: Owen McGill
+  - name: mcgillowen
     email: mcgillowen@gmail.com
 
 sources:
@@ -26,6 +26,5 @@ type: application
 
 kubeVersion: ">= 1.21.0-0"
 
-version: 0.0.0
-
-appVersion: v0.0.0
+version: 0.0.0  # Set in the CI when releasing the chart
+appVersion: v0.0.0  # Set in the CI when releasing the chart

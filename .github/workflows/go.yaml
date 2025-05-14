@@ -2,7 +2,18 @@ name: Go
 
 on:
   push:
+    paths-ignore:
+      - 'deploy/charts/**'
+      - 'init-container/**'
+
   pull_request:
+    paths-ignore:
+      - 'deploy/charts/**'
+      - 'init-container/**'
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
 
 jobs:
   go-test:

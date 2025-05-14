@@ -40,8 +40,8 @@ caInjectionInitcontainer:
       cpu: 500m
       memory: 50Mi
     requests:
-      cpu: ""
-      memory: ""
+      cpu: "250m"
+      memory: "25Mi"
 
 config:
   metadataDomain: "weisshorn.cyd"
@@ -56,6 +56,8 @@ metricsPort: 8080
 caSecret:
   name: inject-ca
   key: ca.crt
+#  value: |  # Not recommended but provided for completeness sake
+#    PEM Encoded CA certificate
 
 serviceAccount:
   # Annotations to add to the service account
