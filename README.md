@@ -1,3 +1,5 @@
+![CAIn logo](docs/images/logo.png)
+
 # Cain or CA Injection Webhook
 
 This program is responsible for injecting a CA bundle into K8s pod containers for TLS communications.
