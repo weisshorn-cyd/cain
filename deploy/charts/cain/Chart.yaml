@@ -16,7 +16,7 @@ keywords:
 annotations:
   artifacthub.io/alternativeName: ca-injector
   artifacthub.io/category: security
-  artifacthub.io/license: MIT
+  artifacthub.io/license: Apache-2.0
   artifacthub.io/maintainers: |
     - name: Owen McGill
       email: mcgillowen@gmail.com
