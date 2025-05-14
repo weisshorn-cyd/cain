@@ -20,8 +20,7 @@ webhooks:
         namespace: {{ .Release.Namespace }}
         path: "/inject/mutate"
       {{- if not (.Capabilities.APIVersions.Has "cert-manager.io/v1") }}
-      caBundle: |
-        {{- $ca.Cert | nindent 8 -}}
+      caBundle: {{ b64enc $ca.Cert }}
       {{- end }}
     admissionReviewVersions: ["v1"]
     sideEffects: NoneOnDryRun
@@ -70,8 +69,7 @@ webhooks:
         namespace: {{ .Release.Namespace }}
         path: "/inject/validate"
       {{- if not (.Capabilities.APIVersions.Has "cert-manager.io/v1") }}
-      caBundle: |
-        {{- $ca.Cert | nindent 8 -}}
+      caBundle: {{ b64enc $ca.Cert }}
       {{- end }}
     admissionReviewVersions: ["v1"]
     sideEffects: NoneOnDryRun
@@ -111,9 +109,7 @@ metadata:
   namespace: {{ .Release.Namespace | quote }}
   labels:
     {{- include "cain.labels" . | nindent 4 }}
-stringData:
-  tls.crt: |
-    {{- $cert.Cert | nindent 4 }}
-  tls.key: |
-    {{- $cert.Key | nindent 4 }}
+data:
+  tls.crt: {{ b64enc $cert.Cert }}
+  tls.key: {{ b64enc $cert.Key }}
 {{- end }}
