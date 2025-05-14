@@ -2,7 +2,6 @@
 {{- if not .Values.externalIssuer -}}
 # Create a selfsigned Issuer, in order to create a root CA certificate for
 # signing webhook serving certificates
----
 apiVersion: cert-manager.io/v1
 kind: Issuer
 metadata:
@@ -40,7 +39,7 @@ metadata:
 spec:
   ca:
     secretName: {{ include "cain.rootCACertificate" . }}
-{{- end -}}
+{{- end }}
 ---
 # Finally, generate a serving certificate for the webhook to use
 apiVersion: cert-manager.io/v1
@@ -49,7 +48,7 @@ metadata:
   name: {{ include "cain.servingCertificate" . }}
   namespace: {{ .Release.Namespace | quote }}
   labels:
-    {{ include "cain.labels" . | nindent 4 }}
+    {{- include "cain.labels" . | nindent 4 }}
 spec:
   commonName: {{ include "cain.fullname" . }}
   usages:

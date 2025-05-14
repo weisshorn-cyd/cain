@@ -1,0 +1,119 @@
+{{- $ca := genCA "cain-ca" 3650 -}}
+{{- $dnsNames := (list (include "cain.fullname" .) (printf "%s.%s" (include "cain.fullname" .) .Release.Namespace) (printf "%s.%s.svc" (include "cain.fullname" .) .Release.Namespace)) -}}
+{{- $cert := genSignedCert (include "cain.fullname" .) nil $dnsNames 3650 $ca -}}
+---
+apiVersion: admissionregistration.k8s.io/v1
+kind: MutatingWebhookConfiguration
+metadata:
+  name: {{ include "cain.fullname" . }}
+  {{- if .Capabilities.APIVersions.Has "cert-manager.io/v1" }}
+  annotations:
+    cert-manager.io/inject-ca-from: {{ .Release.Namespace }}/{{ include "cain.servingCertificate" . }}
+  {{- end }}
+  labels:
+    {{- include "cain.labels" . | nindent 4 }}
+webhooks:
+  - name: {{ include "cain.fullname" . }}.{{ .Release.Namespace }}.svc
+    clientConfig:
+      service:
+        name: {{ include "cain.fullname" . }}
+        namespace: {{ .Release.Namespace }}
+        path: "/inject/mutate"
+      {{- if not (.Capabilities.APIVersions.Has "cert-manager.io/v1") }}
+      caBundle: |
+        {{- $ca.Cert | nindent 8 -}}
+      {{- end }}
+    admissionReviewVersions: ["v1"]
+    sideEffects: NoneOnDryRun
+    rules:
+      - apiGroups:
+          - ""
+        apiVersions:
+          - v1
+        operations:
+        - CREATE
+        resources:
+          - pods
+        scope: Namespaced
+    namespaceSelector:
+      matchExpressions:
+      - key: name
+        operator: NotIn
+        values:
+          - kube-system
+      - key: kubernetes.io/metadata.name
+        operator: NotIn
+        values:
+          - kube-system
+    failurePolicy: Fail
+    matchPolicy: Equivalent
+    objectSelector:
+      matchExpressions:
+      - key: cain.{{ .Values.config.metadataDomain }}/enabled
+        operator: Exists
+---
+apiVersion: admissionregistration.k8s.io/v1
+kind: ValidatingWebhookConfiguration
+metadata:
+  name: {{ include "cain.fullname" . }}
+  {{- if .Capabilities.APIVersions.Has "cert-manager.io/v1" }}
+  annotations:
+    cert-manager.io/inject-ca-from: {{ .Release.Namespace }}/{{ include "cain.servingCertificate" . }}
+  {{- end }}
+  labels:
+    {{- include "cain.labels" . | nindent 4 }}
+webhooks:
+  - name: {{ include "cain.fullname" . }}.{{ .Release.Namespace }}.svc
+    clientConfig:
+      service:
+        name: {{ include "cain.fullname" . }}
+        namespace: {{ .Release.Namespace }}
+        path: "/inject/validate"
+      {{- if not (.Capabilities.APIVersions.Has "cert-manager.io/v1") }}
+      caBundle: |
+        {{- $ca.Cert | nindent 8 -}}
+      {{- end }}
+    admissionReviewVersions: ["v1"]
+    sideEffects: NoneOnDryRun
+    rules:
+      - apiGroups:
+          - ""
+        apiVersions:
+          - v1
+        operations:
+        - CREATE
+        - DELETE
+        resources:
+          - pods
+        scope: Namespaced
+    namespaceSelector:
+      matchExpressions:
+      - key: name
+        operator: NotIn
+        values:
+          - kube-system
+      - key: kubernetes.io/metadata.name
+        operator: NotIn
+        values:
+          - kube-system
+    failurePolicy: Fail
+    matchPolicy: Equivalent
+    objectSelector:
+      matchExpressions:
+      - key: cain.{{ .Values.config.metadataDomain }}/enabled
+        operator: Exists
+{{- if not (.Capabilities.APIVersions.Has "cert-manager.io/v1") }}
+---
+apiVersion: v1
+kind: Secret
+metadata:
+  name: {{ include "cain.servingCertificate" . }}
+  namespace: {{ .Release.Namespace | quote }}
+  labels:
+    {{- include "cain.labels" . | nindent 4 }}
+stringData:
+  tls.crt: |
+    {{- $cert.Cert | nindent 4 }}
+  tls.key: |
+    {{- $cert.Key | nindent 4 }}
+{{- end }}
