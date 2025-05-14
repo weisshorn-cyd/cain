@@ -44,11 +44,13 @@ jobs:
           message: 'CAIn ${{ steps.bump-semver.outputs.new_version }}: PR #${{ github.event.pull_request.number }} ${{ github.event.pull_request.title }}'
 
       - name: Set up Go
+        if: ${{ steps.release-label.outputs.level != null }}
         uses: actions/setup-go@v5
         with:
           go-version: ${{ matrix.go-version }}
           check-latest: true
       - name: Login to GitHub Container Registry
+        if: ${{ steps.release-label.outputs.level != null }}
         uses: docker/login-action@v3
         with:
           registry: ghcr.io
@@ -56,12 +58,14 @@ jobs:
           password: ${{ secrets.GITHUB_TOKEN }}
 
       - name: Publish ko image
+        if: ${{ steps.release-label.outputs.level != null }}
         env:
           VERSION: ${{ steps.bump-semver.outputs.new_version }}
         run: |
           make publish
 
       - name: Publish init images
+        if: ${{ steps.release-label.outputs.level != null }}
         env:
           VERSION: ${{ steps.bump-semver.outputs.new_version }}
         run: |
@@ -88,11 +92,15 @@ jobs:
         with:
           prefix: chart/
           fallback: 0.0.0
+      - id: chart-previous-semver
+        run: |
+          CHART_SEMVER=$(echo ${{ steps.get-previous-chart-tag.outputs.tag }} | cut -d/ -f2)
+          echo "tag=${CHART_SEMVER}">>${GITHUB_OUTPUT}
       - uses: actions-ecosystem/action-bump-semver@v1
         id: bump-semver
         if: ${{ steps.release-label.outputs.level != null }}
         with:
-          current_version: ${{ steps.get-previous-chart-tag.outputs.tag }}
+          current_version: ${{ steps.chart-previous-semver.outputs.tag }}
           level: ${{ steps.release-label.outputs.level }}
 
       - uses: actions-ecosystem/action-push-tag@v1
@@ -101,12 +109,14 @@ jobs:
           tag: chart/${{ steps.bump-semver.outputs.new_version }}
           message: 'CAIn Chart chart/${{ steps.bump-semver.outputs.new_version }}: PR #${{ github.event.pull_request.number }} ${{ github.event.pull_request.title }}'
       - name: Login to GitHub Container Registry
+        if: ${{ steps.release-label.outputs.level != null }}
         uses: docker/login-action@v3
         with:
           registry: ghcr.io
           username: ${{ github.actor }}
           password: ${{ secrets.GITHUB_TOKEN }}
       - name: Publish Helm chart
+        if: ${{ steps.release-label.outputs.level != null }}
         env:
           VERSION: ${{ steps.get-latest-image-tag.outputs.tag }}
           CHART_VERSION: ${{ steps.bump-semver.outputs.new_version }}
