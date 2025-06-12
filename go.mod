@@ -13,7 +13,7 @@ require (
 	github.com/sourcegraph/conc v0.3.0
 	k8s.io/api v0.33.1
 	k8s.io/apimachinery v0.33.1
-	k8s.io/client-go v0.33.0
+	k8s.io/client-go v0.33.1
 )
 
 require (
