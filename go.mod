@@ -8,7 +8,7 @@ require (
 	github.com/kelseyhightower/envconfig v1.4.0
 	github.com/matryer/is v1.4.1
 	github.com/prometheus/client_golang v1.22.0
-	github.com/prometheus/common v0.64.0
+	github.com/prometheus/common v0.65.0
 	github.com/slok/kubewebhook/v2 v2.7.0
 	github.com/sourcegraph/conc v0.3.0
 	k8s.io/api v0.33.1
