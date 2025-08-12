@@ -17,7 +17,7 @@ jobs:
       matrix:
         go-version: ['stable']
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v5
 
       - uses: actions-ecosystem/action-release-label@v1
         id: release-label
@@ -74,7 +74,7 @@ jobs:
     name: Release chart
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v5
 
       - uses: actions-ecosystem/action-release-label@v1
         id: release-label
