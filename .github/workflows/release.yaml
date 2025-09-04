@@ -45,7 +45,7 @@ jobs:
 
       - name: Set up Go
         if: ${{ steps.release-label.outputs.level != null }}
-        uses: actions/setup-go@v5
+        uses: actions/setup-go@v6
         with:
           go-version: ${{ matrix.go-version }}
           check-latest: true
