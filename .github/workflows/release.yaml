@@ -17,27 +17,27 @@ jobs:
       matrix:
         go-version: ['stable']
     steps:
-      - uses: actions/checkout@v5
+      - uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
 
-      - uses: actions-ecosystem/action-release-label@v1
+      - uses: actions-ecosystem/action-release-label@1c7ef83d383a57bf253a2e2e9dfe1b55f445ae15 # v1.2.0
         id: release-label
         if: ${{ github.event.pull_request.merged == true }}
 
-      - uses: actions-ecosystem/action-get-latest-tag@v1
+      - uses: actions-ecosystem/action-get-latest-tag@b7c32daec3395a9616f88548363a42652b22d435 # v1.6.0
         id: get-latest-tag
         if: ${{ steps.release-label.outputs.level != null }}
         with:
           semver_only: true
           initial_version: v0.0.0
 
-      - uses: actions-ecosystem/action-bump-semver@v1
+      - uses: actions-ecosystem/action-bump-semver@34e334551143a5301f38c830e44a22273c6ff5c5 # v1.0.0
         id: bump-semver
         if: ${{ steps.release-label.outputs.level != null }}
         with:
           current_version: ${{ steps.get-latest-tag.outputs.tag }}
           level: ${{ steps.release-label.outputs.level }}
 
-      - uses: actions-ecosystem/action-push-tag@v1
+      - uses: actions-ecosystem/action-push-tag@6e82caefe706f5a729e354df7443dc82f98a414f # v1.0.0
         if: ${{ steps.release-label.outputs.level != null }}
         with:
           tag: ${{ steps.bump-semver.outputs.new_version }}
@@ -45,13 +45,13 @@ jobs:
 
       - name: Set up Go
         if: ${{ steps.release-label.outputs.level != null }}
-        uses: actions/setup-go@v6
+        uses: actions/setup-go@7a3fe6cf4cb3a834922a1244abfce67bcef6a0c5 # v6.2.0
         with:
           go-version: ${{ matrix.go-version }}
           check-latest: true
       - name: Login to GitHub Container Registry
         if: ${{ steps.release-label.outputs.level != null }}
-        uses: docker/login-action@v3
+        uses: docker/login-action@c94ce9fb468520275223c153574b00df6fe4bcc9 # v3.7.0
         with:
           registry: ghcr.io
           username: ${{ github.actor }}
@@ -74,43 +74,43 @@ jobs:
     name: Release chart
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
 
-      - uses: actions-ecosystem/action-release-label@v1
+      - uses: actions-ecosystem/action-release-label@1c7ef83d383a57bf253a2e2e9dfe1b55f445ae15 # v1.2.0
         id: release-label
         if: ${{ github.event.pull_request.merged == true }}
         with:
           label_prefix: chart/
-      - uses: actions-ecosystem/action-get-latest-tag@v1
+      - uses: actions-ecosystem/action-get-latest-tag@b7c32daec3395a9616f88548363a42652b22d435 # v1.6.0
         id: get-latest-image-tag
         if: ${{ steps.release-label.outputs.level != null }}
         with:
           semver_only: true
-      - uses: WyriHaximus/github-action-get-previous-tag@v1.4.0
+      - uses: WyriHaximus/github-action-get-previous-tag@61819f33034117e6c686e6a31dba995a85afc9de # v2.0.0
         id: get-previous-chart-tag
         if: ${{ steps.release-label.outputs.level != null }}
         with:
-          prefix: chart/
+          pattern: chart/*
           fallback: 0.0.0
       - id: chart-previous-semver
         run: |
           CHART_SEMVER=$(echo ${{ steps.get-previous-chart-tag.outputs.tag }} | cut -d/ -f2)
           echo "tag=${CHART_SEMVER}">>${GITHUB_OUTPUT}
-      - uses: actions-ecosystem/action-bump-semver@v1
+      - uses: actions-ecosystem/action-bump-semver@34e334551143a5301f38c830e44a22273c6ff5c5 # v1.0.0
         id: bump-semver
         if: ${{ steps.release-label.outputs.level != null }}
         with:
           current_version: ${{ steps.chart-previous-semver.outputs.tag }}
           level: ${{ steps.release-label.outputs.level }}
 
-      - uses: actions-ecosystem/action-push-tag@v1
+      - uses: actions-ecosystem/action-push-tag@6e82caefe706f5a729e354df7443dc82f98a414f # v1.0.0
         if: ${{ steps.release-label.outputs.level != null }}
         with:
           tag: chart/${{ steps.bump-semver.outputs.new_version }}
           message: 'CAIn Chart chart/${{ steps.bump-semver.outputs.new_version }}: PR #${{ github.event.pull_request.number }} ${{ github.event.pull_request.title }}'
       - name: Login to GitHub Container Registry
         if: ${{ steps.release-label.outputs.level != null }}
-        uses: docker/login-action@v3
+        uses: docker/login-action@c94ce9fb468520275223c153574b00df6fe4bcc9 # v3.7.0
         with:
           registry: ghcr.io
           username: ${{ github.actor }}
