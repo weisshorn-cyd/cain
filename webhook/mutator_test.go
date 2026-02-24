@@ -67,7 +67,7 @@ func TestCAInjectionMutator_Mutate(t *testing.T) {
 					Labels: map[string]string{
 						"cain.weisshorn.cyd/enabled": "true",
 					},
-					Annotations: map[string]string{
+					Annotations: map[string]string{ //nolint:gosec // G101, these aren't secrets
 						"cain.weisshorn.cyd/extra-ca-secrets": "s1/t1.crt,s2/t2.crt",
 					},
 					Namespace: "default",
@@ -86,7 +86,7 @@ func TestCAInjectionMutator_Mutate(t *testing.T) {
 					Labels: map[string]string{
 						"cain.weisshorn.cyd/enabled": "true",
 					},
-					Annotations: map[string]string{
+					Annotations: map[string]string{ //nolint:gosec // G101, these aren't secrets
 						"cain.weisshorn.cyd/extra-ca-secrets": "s1/t1.crt,s2/t2.crt",
 					},
 					Name:      "test",
@@ -412,7 +412,7 @@ func TestCAInjectionMutator_Mutate(t *testing.T) {
 						{
 							Name: "cain-truststore",
 							VolumeSource: corev1.VolumeSource{
-								Secret: &corev1.SecretVolumeSource{
+								Secret: &corev1.SecretVolumeSource{ //nolint:gosec // G101, these aren't secrets
 									SecretName: "test-dep-truststore-cert",
 									Items: []corev1.KeyToPath{
 										{
@@ -436,7 +436,7 @@ func TestCAInjectionMutator_Mutate(t *testing.T) {
 					Labels: map[string]string{
 						"cain.weisshorn.cyd/enabled": "true",
 					},
-					Annotations: map[string]string{
+					Annotations: map[string]string{ //nolint:gosec // G101, these aren't secrets
 						"cain.weisshorn.cyd/extra-ca-secrets": "s1/t1.crt,s2/t2.crt",
 					},
 					Namespace: "default",
@@ -458,7 +458,7 @@ func TestCAInjectionMutator_Mutate(t *testing.T) {
 					Labels: map[string]string{
 						"cain.weisshorn.cyd/enabled": "true",
 					},
-					Annotations: map[string]string{
+					Annotations: map[string]string{ //nolint:gosec // G101, these aren't secrets
 						"cain.weisshorn.cyd/extra-ca-secrets": "s1/t1.crt,s2/t2.crt",
 					},
 					Namespace: "default",
@@ -776,7 +776,7 @@ func TestCAInjectionMutator_Mutate(t *testing.T) {
 						{
 							Name: "cain-truststore",
 							VolumeSource: corev1.VolumeSource{
-								Secret: &corev1.SecretVolumeSource{
+								Secret: &corev1.SecretVolumeSource{ //nolint:gosec // G101, these aren't secrets
 									SecretName: "test-dep-truststore-cert",
 									Items: []corev1.KeyToPath{
 										{

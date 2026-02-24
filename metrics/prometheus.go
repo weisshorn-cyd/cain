@@ -1,4 +1,4 @@
-package metrics
+package metrics //nolint:revive // this is the best name for this package
 
 import (
 	"errors"
@@ -60,14 +60,15 @@ func NewPrometheus(subsys string) (*Prometheus, *prometheus.Registry, error) {
 
 	promReg := prometheus.NewPedanticRegistry()
 
-	if err := errors.Join(
+	err := errors.Join(
 		promReg.Register(prom.resourceAlreadyExists),
 		promReg.Register(prom.resourceCreateError),
 		promReg.Register(prom.resourceCreated),
 		promReg.Register(prom.resourceNotFound),
 		promReg.Register(prom.resourceDeleted),
 		promReg.Register(prom.resourceDeleteError),
-	); err != nil {
+	)
+	if err != nil {
 		return nil, nil, fmt.Errorf("registering metrics collectors: %w", err)
 	}
 
