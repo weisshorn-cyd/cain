@@ -17,7 +17,7 @@ jobs:
       matrix:
         go-version: ['stable']
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v5
 
       - uses: actions-ecosystem/action-release-label@v1
         id: release-label
@@ -45,7 +45,7 @@ jobs:
 
       - name: Set up Go
         if: ${{ steps.release-label.outputs.level != null }}
-        uses: actions/setup-go@v5
+        uses: actions/setup-go@v6
         with:
           go-version: ${{ matrix.go-version }}
           check-latest: true
