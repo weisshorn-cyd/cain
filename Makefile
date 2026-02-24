@@ -52,7 +52,7 @@ verify:
 	$(GO) mod verify
 
 fmt: gofumpt
-	$(GOTOOL) $(GOFUMPT) -l -w .
+	$(GOTOOL) mvdan.cc/gofumpt -l -w .
 
 lint: golangci-lint clean
 	$(GOLANGCI_LINT) run -c .golangci.yaml --fix ./...
@@ -125,14 +125,14 @@ $(TOOLSMOD):
 tools: ko gofumpt govulncheck helm
 
 KO           := ko
-KO_VERSION   := v0.18.0
+KO_VERSION   := v0.18.1
 KO_LOOKUP    := github.com/google/ko
 ko: $(TOOLSMOD)
 	@$(GOTOOL) | grep $(KO_LOOKUP) && $(GOTOOL) $(KO) version | grep -q $(KO_VERSION) || \
 	$(call go-install-tool,$(KO),$(KO_LOOKUP)@$(KO_VERSION))
 
-GOFUMPT           := gofumpt
-GOFUMPT_VERSION   := v0.8.0
+GOFUMPT           := mvdan.cc/gofumpt
+GOFUMPT_VERSION   := v0.9.2
 GOFUMPT_LOOKUP    := mvdan.cc/gofumpt
 gofumpt: $(TOOLSMOD)
 	@$(GOTOOL) | grep $(GOFUMPT) && $(GOTOOL) $(GOFUMPT) -version | grep -q $(GOFUMPT_VERSION) || \
@@ -146,13 +146,13 @@ govulncheck: $(TOOLSMOD)
 	$(call go-install-tool,$(GOVULNCHECK),$(GOVULNCHECK_LOOKUP)@$(GOVULNCHECK_VERSION))
 
 GOLANGCI_LINT          := $(LOCALBIN)/golangci-lint
-GOLANGCI_LINT_VERSION  := 2.1.6
+GOLANGCI_LINT_VERSION  := 2.10.1
 golangci-lint: $(LOCALBIN)
 	@test -s $(GOLANGCI_LINT) && $(GOLANGCI_LINT) version | grep -q $(GOLANGCI_LINT_VERSION) || \
 	curl -sSfL https://raw.githubusercontent.com/golangci/golangci-lint/HEAD/install.sh | sh -s -- -b $(LOCALBIN) v$(GOLANGCI_LINT_VERSION)
 
 HELM := $(LOCALBIN)/helm
-HELM_VERSION := v3.17.3
+HELM_VERSION := v3.20.0
 helm: $(LOCALBIN)
 	@test -s $(HELM) && $(HELM) version | grep -q $(HELM_VERSION) || \
 	curl -sSfL https://get.helm.sh/helm-$(HELM_VERSION)-linux-amd64.tar.gz | tar -C $(LOCALBIN) --strip-components=1 -xzf - linux-amd64/helm
