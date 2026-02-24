@@ -1,4 +1,4 @@
-package utils //nolint:revive // this is the best name for this package
+package utils //nolint:revive // this name is fine for this package
 
 import (
 	"errors"

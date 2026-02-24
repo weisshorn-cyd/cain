@@ -795,7 +795,7 @@ func TestCAInjectionMutator_Mutate(t *testing.T) {
 		},
 	}
 
-	k8sClient := testclient.NewSimpleClientset(&appsv1.Deployment{
+	k8sClient := testclient.NewClientset(&appsv1.Deployment{
 		ObjectMeta: metav1.ObjectMeta{
 			Name:      "test-dep",
 			Namespace: "default",
