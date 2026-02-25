@@ -49,7 +49,7 @@ config:
   injectorIssuer: "cert-issuer"
   truststorePassword: "injected-ca"
   logLevel: info
-  reinvocationPolicy: Never # Other possible value is IfNeeded
+  reinvocationPolicy: Never  # Other possible value is IfNeeded
 
 containerPort: 8443
 metricsPort: 8080
