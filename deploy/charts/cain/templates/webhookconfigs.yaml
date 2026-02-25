@@ -73,7 +73,6 @@ webhooks:
       caBundle: {{ b64enc $ca.Cert }}
       {{- end }}
     admissionReviewVersions: ["v1"]
-    reinvocationPolicy: {{ .Values.config.reinvocationPolicy }}
     sideEffects: NoneOnDryRun
     rules:
       - apiGroups:
