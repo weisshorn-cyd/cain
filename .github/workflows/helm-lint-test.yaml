@@ -52,5 +52,5 @@ jobs:
         run: |
           ct install \
           --config ${{ github.workspace }}/ct.yaml \
-          --helm-extra-set-args "--set=image.tag=${{ steps.get-latest-image-tag.outputs.tag }}" \
+          --helm-extra-set-args "--set=image.tag=${{ steps.get-latest-image-tag.outputs.tag }} --set=caSecret.value='PEM Encoded CA certificate'" \
           --target-branch ${{ github.event.repository.default_branch }}
