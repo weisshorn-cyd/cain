@@ -1,4 +1,4 @@
-package http
+package http //nolint:revive // this is the best name for this package
 
 import (
 	"context"

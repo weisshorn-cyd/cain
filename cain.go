@@ -37,6 +37,8 @@ import (
 )
 
 type envConfig struct {
+	webhook.ContainerResourcesEnv
+
 	Port               string          `default:"8443"                                                                                    desc:"The webhook HTTPS port"                                                                      envconfig:"PORT"`
 	MetricsPort        string          `default:"8080"                                                                                    desc:"The metrics HTTP port"                                                                       envconfig:"METRICS_PORT"`
 	LogLevel           *slog.LevelVar  `default:"info"                                                                                    desc:"The level to log at"                                                                         envconfig:"LOG_LEVEL"`
@@ -52,8 +54,6 @@ type envConfig struct {
 	DebianInitImage    string          `default:"ghcr.io/weisshorn-cyd/cain-debian-init"                                                  desc:"The container image to use for the Debian family init containers"                            envconfig:"DEBIAN_INIT_IMAGE"`
 	DebianInitTag      string          `desc:"The container image tag to use for the Debian family init containers"                       envconfig:"DEBIAN_INIT_TAG"`
 	MetricsSubsystem   string          `default:""                                                                                        desc:"The subsystem for the metrics"                                                               envconfig:"METRICS_SUBSYSTEM"`
-
-	webhook.ContainerResourcesEnv
 }
 
 var ErrSecretKeyMissing = errors.New("secret is missing key")

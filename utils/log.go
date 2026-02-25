@@ -16,23 +16,23 @@ func NewLogger(sloglogger *slog.Logger) log.Logger { //nolint:ireturn // kwh exp
 	return logger{sloglogger}
 }
 
-func (l logger) Infof(format string, args ...interface{}) {
+func (l logger) Infof(format string, args ...any) {
 	l.Info(fmt.Sprintf(format, args...))
 }
 
-func (l logger) Warningf(format string, args ...interface{}) {
+func (l logger) Warningf(format string, args ...any) {
 	l.Info(fmt.Sprintf(format, args...))
 }
 
-func (l logger) Errorf(format string, args ...interface{}) {
+func (l logger) Errorf(format string, args ...any) {
 	l.Error(fmt.Sprintf(format, args...))
 }
 
-func (l logger) Debugf(format string, args ...interface{}) {
+func (l logger) Debugf(format string, args ...any) {
 	l.Debug(fmt.Sprintf(format, args...))
 }
 
-func (l logger) WithValues(values map[string]interface{}) log.Logger { //nolint:ireturn // kwh expects the interface
+func (l logger) WithValues(values map[string]any) log.Logger { //nolint:ireturn // kwh expects the interface
 	args := make([]any, 0, len(values))
 
 	for k, v := range values {

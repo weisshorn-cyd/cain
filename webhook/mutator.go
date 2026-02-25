@@ -167,13 +167,14 @@ func (mut *Mutator) injectCA(
 		}
 	}
 
-	if err := mut.addCASecretVolumes(
+	err := mut.addCASecretVolumes(
 		ctx,
 		pod,
 		namespace,
 		mut.extractor.SecretVolumeName(pod),
 		mut.extractor.CaVolumeName(pod),
-	); err != nil {
+	)
+	if err != nil {
 		mut.logger.ErrorContext(ctx, "adding CA secret volumes failed", "error", err)
 
 		return &kwhmutating.MutatorResult{Warnings: []string{"adding CA secret volumes failed"}}, nil
