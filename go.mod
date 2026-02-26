@@ -3,7 +3,7 @@ module github.com/weisshorn-cyd/cain
 go 1.26.0
 
 require (
-	github.com/cert-manager/cert-manager v1.19.3
+	github.com/cert-manager/cert-manager v1.19.4
 	github.com/fsnotify/fsnotify v1.9.0
 	github.com/kelseyhightower/envconfig v1.4.0
 	github.com/matryer/is v1.4.1
