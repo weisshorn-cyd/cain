@@ -39,21 +39,22 @@ import (
 type envConfig struct {
 	webhook.ContainerResourcesEnv
 
-	Port               string          `default:"8443"                                                                                    desc:"The webhook HTTPS port"                                                                      envconfig:"PORT"`
-	MetricsPort        string          `default:"8080"                                                                                    desc:"The metrics HTTP port"                                                                       envconfig:"METRICS_PORT"`
-	LogLevel           *slog.LevelVar  `default:"info"                                                                                    desc:"The level to log at"                                                                         envconfig:"LOG_LEVEL"`
-	TLSCertFile        string          `default:"/run/secrets/tls/tls.crt"                                                                desc:"Path to the file containing the TLS Certificate"                                             envconfig:"TLS_CERT_FILE"`
-	TLSKeyFile         string          `default:"/run/secrets/tls/tls.key"                                                                desc:"Path to the file containing the TLS Key"                                                     envconfig:"TLS_KEY_FILE"`
-	MetadataDomain     string          `default:"weisshorn.cyd"                                                                           desc:"The domain of the labels and annotations, this can allow multiple instances of the injector" envconfig:"METADATA_DOMAIN"`
-	CAIssuer           string          `desc:"The CA issuer to use when creating Certificate resources"                                   envconfig:"CA_ISSUER"                                                                              required:"true"`
-	CASecret           *utils.CASecret `desc:"The default CA secret to use, with the key of the CA, <secret name>/<CA key>[,<CA key>...]" envconfig:"CA_SECRET"                                                                              required:"true"`
-	TruststorePassword string          `desc:"The password to use for the JVM truststore"                                                 envconfig:"TRUSTSTORE_PASSWORD"                                                                    required:"true"`
-	JVMEnvVariable     string          `desc:"The ENV variable to use for JVM containers"                                                 envconfig:"JVM_ENV_VAR"                                                                            required:"true"`
-	RedHatInitImage    string          `default:"ghcr.io/weisshorn-cyd/cain-redhat-init"                                                  desc:"The container image to use for the RedHat family init containers"                            envconfig:"REDHAT_INIT_IMAGE"`
-	RedHatInitTag      string          `desc:"The container image tag to use for the RedHat family init containers"                       envconfig:"REDHAT_INIT_TAG"`
-	DebianInitImage    string          `default:"ghcr.io/weisshorn-cyd/cain-debian-init"                                                  desc:"The container image to use for the Debian family init containers"                            envconfig:"DEBIAN_INIT_IMAGE"`
-	DebianInitTag      string          `desc:"The container image tag to use for the Debian family init containers"                       envconfig:"DEBIAN_INIT_TAG"`
-	MetricsSubsystem   string          `default:""                                                                                        desc:"The subsystem for the metrics"                                                               envconfig:"METRICS_SUBSYSTEM"`
+	Port               string          `default:"8443"                                                                                                                                  desc:"The webhook HTTPS port"                                                                      envconfig:"PORT"`
+	MetricsPort        string          `default:"8080"                                                                                                                                  desc:"The metrics HTTP port"                                                                       envconfig:"METRICS_PORT"`
+	LogLevel           *slog.LevelVar  `default:"info"                                                                                                                                  desc:"The level to log at"                                                                         envconfig:"LOG_LEVEL"`
+	TLSCertFile        string          `default:"/run/secrets/tls/tls.crt"                                                                                                              desc:"Path to the file containing the TLS Certificate"                                             envconfig:"TLS_CERT_FILE"`
+	TLSKeyFile         string          `default:"/run/secrets/tls/tls.key"                                                                                                              desc:"Path to the file containing the TLS Key"                                                     envconfig:"TLS_KEY_FILE"`
+	MetadataDomain     string          `default:"weisshorn.cyd"                                                                                                                         desc:"The domain of the labels and annotations, this can allow multiple instances of the injector" envconfig:"METADATA_DOMAIN"`
+	DNSDomain          string          `desc:"The TLD or most significant subdomain for use in the Certificates CN and DNSNames FQDN, only necessary if different from METADATA_DOMAIN" envconfig:"DNS_DOMAIN"`
+	CAIssuer           string          `desc:"The CA issuer to use when creating Certificate resources"                                                                                 envconfig:"CA_ISSUER"                                                                              required:"true"`
+	CASecret           *utils.CASecret `desc:"The default CA secret to use, with the key of the CA, <secret name>/<CA key>[,<CA key>...]"                                               envconfig:"CA_SECRET"                                                                              required:"true"`
+	TruststorePassword string          `desc:"The password to use for the JVM truststore"                                                                                               envconfig:"TRUSTSTORE_PASSWORD"                                                                    required:"true"`
+	JVMEnvVariable     string          `desc:"The ENV variable to use for JVM containers"                                                                                               envconfig:"JVM_ENV_VAR"                                                                            required:"true"`
+	RedHatInitImage    string          `default:"ghcr.io/weisshorn-cyd/cain-redhat-init"                                                                                                desc:"The container image to use for the RedHat family init containers"                            envconfig:"REDHAT_INIT_IMAGE"`
+	RedHatInitTag      string          `desc:"The container image tag to use for the RedHat family init containers"                                                                     envconfig:"REDHAT_INIT_TAG"`
+	DebianInitImage    string          `default:"ghcr.io/weisshorn-cyd/cain-debian-init"                                                                                                desc:"The container image to use for the Debian family init containers"                            envconfig:"DEBIAN_INIT_IMAGE"`
+	DebianInitTag      string          `desc:"The container image tag to use for the Debian family init containers"                                                                     envconfig:"DEBIAN_INIT_TAG"`
+	MetricsSubsystem   string          `default:""                                                                                                                                      desc:"The subsystem for the metrics"                                                               envconfig:"METRICS_SUBSYSTEM"`
 }
 
 var ErrSecretKeyMissing = errors.New("secret is missing key")
@@ -333,7 +334,7 @@ func setupWebhooks( //nolint: cyclop,funlen // hard to reduce ifs that are mainl
 	}
 
 	kwhLog := utils.NewLogger(log.With("component", "webhook"))
-	extractor := metadata.NewExtractor(env.MetadataDomain, env.TruststorePassword)
+	extractor := metadata.NewExtractor(env.MetadataDomain, env.DNSDomain, env.TruststorePassword)
 
 	valWh, err := kwhvalidating.NewWebhook(kwhvalidating.WebhookConfig{
 		ID: "cain-validation",
