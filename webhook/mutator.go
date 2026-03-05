@@ -305,7 +305,7 @@ func (mut *Mutator) addCASecretVolumes(
 	caSecretVolumeName string,
 	caCompleteVolumeName string,
 ) error {
-	rootObj, _, err := getRootObject(
+	ownerRef, err := rootOwner(
 		ctx, mut.client, pod, nil, namespace,
 	)
 	if err != nil {
@@ -314,7 +314,7 @@ func (mut *Mutator) addCASecretVolumes(
 
 	pod.Spec.Volumes = append(
 		pod.Spec.Volumes,
-		mut.getCASecretVolumes(pod, rootObj.GetName(), caSecretVolumeName, caCompleteVolumeName)...,
+		mut.getCASecretVolumes(pod, ownerRef.Name, caSecretVolumeName, caCompleteVolumeName)...,
 	)
 
 	caSecretVolumeMount := corev1.VolumeMount{
@@ -374,7 +374,7 @@ func (mut *Mutator) addJVMSecretAndEnv(
 	pod *corev1.Pod,
 	namespace string,
 ) error {
-	rootObj, _, err := getRootObject(
+	ownerRef, err := rootOwner(
 		ctx, mut.client, pod, nil, namespace,
 	)
 	if err != nil {
@@ -388,7 +388,7 @@ func (mut *Mutator) addJVMSecretAndEnv(
 		Name: caTruststoreVolumeName,
 		VolumeSource: corev1.VolumeSource{
 			Secret: &corev1.SecretVolumeSource{
-				SecretName:  certificates.SecretName(rootObj.GetName()),
+				SecretName:  certificates.SecretName(ownerRef.Name),
 				DefaultMode: &mut.defaultMode,
 				Items: []corev1.KeyToPath{
 					{

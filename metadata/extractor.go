@@ -190,8 +190,8 @@ func (e Extractor) SecretVolumeName(obj metav1.Object) string {
 	return annotationValue
 }
 
-func (e Extractor) JVMCommonName(obj metav1.Object) string {
-	defaultCommonName := fmt.Sprintf("%s.%s.%s", obj.GetName(), obj.GetNamespace(), e.domain)
+func (e Extractor) JVMCommonName(obj metav1.Object, rootName, rootNS string) string {
+	defaultCommonName := fmt.Sprintf("%s.%s.%s", rootName, rootNS, e.domain)
 
 	cnLength := len(defaultCommonName)
 	if maxCNLength < cnLength {

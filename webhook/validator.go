@@ -129,7 +129,7 @@ func (validator *Validator) createResources(
 	pod *corev1.Pod,
 	admRev *kwhmodel.AdmissionReview,
 ) *kwhvalidating.ValidatorResult {
-	rootObj, ownerRef, err := getRootObject(
+	ownerRef, err := rootOwner(
 		ctx, validator.client, pod, nil, admRev.Namespace,
 	)
 	if err != nil {
@@ -140,7 +140,7 @@ func (validator *Validator) createResources(
 
 	if !admRev.DryRun {
 		validator.secCreationChan <- secrets.CreationRequest{
-			Name:      validator.SecretName(rootObj.GetName()),
+			Name:      validator.SecretName(ownerRef.Name),
 			KVs:       validator.caSecretData,
 			Namespace: admRev.Namespace,
 			CtlrRef:   ownerRef,
@@ -149,9 +149,9 @@ func (validator *Validator) createResources(
 
 	if validator.extractor.IsJVMEnabled(pod) && !admRev.DryRun {
 		certInfo := certificates.Info{
-			PodName:            rootObj.GetName(),
-			Namespace:          rootObj.GetNamespace(),
-			DNSNames:           []string{validator.extractor.JVMCommonName(rootObj)},
+			PodName:            ownerRef.Name,
+			Namespace:          admRev.Namespace,
+			DNSNames:           []string{validator.extractor.JVMCommonName(pod, ownerRef.Name, admRev.Namespace)},
 			CtlrRef:            ownerRef,
 			TruststorePassword: validator.extractor.TruststorePassword(pod),
 		}
