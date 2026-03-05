@@ -11,7 +11,7 @@ import (
 	"k8s.io/client-go/kubernetes"
 )
 
-var ErrNoRootObjectFound = errors.New("no root object found")
+var ErrNoRootOwnerFound = errors.New("no root owner found")
 
 type ContainerResources struct {
 	cpu    resources
@@ -85,21 +85,30 @@ func (res *ContainerResources) ToK8S() corev1.ResourceRequirements {
 	}
 }
 
-// getRootObject attempts to retrieve the controlling/root object of the passed in object.
-// This is needed since if a Pod is created by a ReplicaSet, the pod does not have a name
-// but will have a generated name based on the ReplicaSet name which is also a generated
-// name based on either the Deployment, StatefulSet or DaemonSet name.
-func getRootObject( //nolint:ireturn // no choice but to return an interface
+// rootOwner tries to determine the rootOwner by recursively following owner references.
+// If it encounters builtin K8s resources it will get those objects and inspect their owner references,
+// if they do not have an owner they are considered the root and the owner reference that refers to them
+// from their child is returned.
+// The ownerRef parameter is not necessary for the n=0 call, it is used as aggregator when recursing so can be nil.
+// If the provided metav1.Object does not have any owner references, this returns a dummy owner reference with only
+// the name set to the name of the object.
+func rootOwner(
 	ctx context.Context,
 	client kubernetes.Interface,
 	obj metav1.Object,
 	ownerRef *metav1.OwnerReference,
 	namespace string,
-) (metav1.Object, *metav1.OwnerReference, error) {
+) (*metav1.OwnerReference, error) {
 	// if there are no OwnerReferences, we have reached the root object and have found the root object
 	ownerRefs := obj.GetOwnerReferences()
 	if len(ownerRefs) == 0 {
-		return obj, ownerRef, nil
+		if ownerRef == nil {
+			return &metav1.OwnerReference{
+				Name: obj.GetName(),
+			}, nil
+		}
+
+		return ownerRef, nil
 	}
 
 	kindFuncs := map[string]func(
@@ -137,22 +146,36 @@ func getRootObject( //nolint:ireturn // no choice but to return an interface
 		},
 	}
 
-	var err error
+	var (
+		err          error
+		rootOwnerRef *metav1.OwnerReference
+	)
 	// iterate over the OwnerReferences looking for K8s object Kinds that could be
 	// our root object and then recurse up the hierarchy
 	for _, ownRef := range ownerRefs {
 		kindFunc, ok := kindFuncs[ownRef.Kind]
 		if !ok {
-			continue
+			return &ownRef, nil
 		}
 
 		obj, err = kindFunc(ctx, client, ownRef, namespace)
 		if err != nil {
-			return nil, nil, fmt.Errorf("getting %s %q: %w", ownRef.Kind, ownRef.Name, err)
+			return nil, fmt.Errorf("getting %s %q: %w", ownRef.Kind, ownRef.Name, err)
 		}
 
-		return getRootObject(ctx, client, obj, &ownRef, namespace)
+		ownerRef, err := rootOwner(ctx, client, obj, &ownRef, namespace)
+		if err != nil {
+			return nil, fmt.Errorf("root owner for %s %q: %w", ownRef.Kind, ownRef.Name, err)
+		}
+
+		if ownerRef != nil {
+			rootOwnerRef = ownerRef
+		}
 	}
 
-	return nil, nil, ErrNoRootObjectFound
+	if rootOwnerRef == nil {
+		return nil, ErrNoRootOwnerFound
+	}
+
+	return rootOwnerRef, nil
 }
