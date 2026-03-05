@@ -44,6 +44,7 @@ const (
 
 type Extractor struct {
 	domain                       string
+	dnsDomain                    string
 	truststorePassword           string
 	enabledLabel                 string
 	extraSecretsAnnotation       string
@@ -57,9 +58,10 @@ type Extractor struct {
 	jvmPathAnnotation            string
 }
 
-func NewExtractor(domain, truststorePassword string) Extractor {
+func NewExtractor(domain, dnsDomain, truststorePassword string) Extractor {
 	return Extractor{
 		domain:                       domain,
+		dnsDomain:                    dnsDomain,
 		truststorePassword:           truststorePassword,
 		enabledLabel:                 fmt.Sprintf(enabledLabel, domain),
 		extraSecretsAnnotation:       extraSecretsAnnotation,
@@ -191,7 +193,12 @@ func (e Extractor) SecretVolumeName(obj metav1.Object) string {
 }
 
 func (e Extractor) JVMCommonName(obj metav1.Object, rootName, rootNS string) string {
-	defaultCommonName := fmt.Sprintf("%s.%s.%s", rootName, rootNS, e.domain)
+	domain := e.dnsDomain
+	if domain == "" {
+		domain = e.domain
+	}
+
+	defaultCommonName := fmt.Sprintf("%s.%s.%s", rootName, rootNS, domain)
 
 	cnLength := len(defaultCommonName)
 	if maxCNLength < cnLength {

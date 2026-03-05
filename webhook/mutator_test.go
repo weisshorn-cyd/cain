@@ -802,7 +802,7 @@ func TestCAInjectionMutator_Mutate(t *testing.T) {
 		},
 	})
 
-	extractor := metadata.NewExtractor("weisshorn.cyd", "changeit")
+	extractor := metadata.NewExtractor("weisshorn.cyd", "weisshorn.ch", "changeit")
 
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
