@@ -45,6 +45,7 @@ caInjectionInitcontainer:
 
 config:
   metadataDomain: "weisshorn.cyd"
+  # dnsDomain: "weisshorn.ch" # if empty or not set, value default to metadataDomain.
   jvmEnvVar: "JAVA_OPTS_CUSTOM"
   injectorIssuer: "cert-issuer"
   truststorePassword: "injected-ca"
