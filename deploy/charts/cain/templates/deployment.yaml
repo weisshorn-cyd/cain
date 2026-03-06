@@ -44,6 +44,10 @@ spec:
               value: {{ .Values.config.injectorIssuer }}
             - name: METADATA_DOMAIN
               value: "{{ .Values.config.metadataDomain }}"
+            {{- if .Values.config.dnsDomain }}
+            - name: DNS_DOMAIN
+              value: "{{ .Values.config.dnsDomain }}"
+            {{- end }}
             - name: REDHAT_INIT_IMAGE
               {{- with .Values.redhatInitImage }}
               value: "{{- if .registry -}}{{ .registry }}/{{- end -}}{{ .repository }}"
