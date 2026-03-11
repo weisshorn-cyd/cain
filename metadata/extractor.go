@@ -10,12 +10,12 @@ import (
 
 const (
 	enabledLabel                 = "cain.%s/enabled"
-	extraSecretsAnnotation       = "cain.%s/extra-ca-secrets"
+	extraSecretsAnnotation       = "cain.%s/extra-ca-secrets" //nolint:gosec // Not a hardcoded credential G101
 	familyAnnotation             = "cain.%s/family"
 	jvmAnnotation                = "cain.%s/jvm"
 	pythonAnnotation             = "cain.%s/python"
 	caVolumeNameAnnotation       = "cain.%s/ca-volume-name"
-	secretVolumeNameAnnotation   = "cain.%s/secret-volume-name"
+	secretVolumeNameAnnotation   = "cain.%s/secret-volume-name" //nolint:gosec // Not a hardcoded credential G101
 	jvmCommonNameAnnotation      = "cain.%s/jvm-common-name"
 	truststorePasswordAnnotation = "cain.%s/truststore-password"
 	jvmPathAnnotation            = "cain.%s/jvm-path"
