@@ -10,15 +10,15 @@ import (
 
 const (
 	enabledLabel                 = "cain.%s/enabled"
-	extraSecretsAnnotation       = "cain.weisshorn.cyd/extra-ca-secrets"
-	familyAnnotation             = "cain.weisshorn.cyd/family"
-	jvmAnnotation                = "cain.weisshorn.cyd/jvm"
-	pythonAnnotation             = "cain.weisshorn.cyd/python"
-	caVolumeNameAnnotation       = "cain.weisshorn.cyd/ca-volume-name"
-	secretVolumeNameAnnotation   = "cain.weisshorn.cyd/secret-volume-name"
-	jvmCommonNameAnnotation      = "cain.weisshorn.cyd/jvm-common-name"
-	truststorePasswordAnnotation = "cain.weisshorn.cyd/truststore-password"
-	jvmPathAnnotation            = "cain.weisshorn.cyd/jvm-path"
+	extraSecretsAnnotation       = "cain.%s/extra-ca-secrets" //nolint:gosec // Not a hardcoded credential G101
+	familyAnnotation             = "cain.%s/family"
+	jvmAnnotation                = "cain.%s/jvm"
+	pythonAnnotation             = "cain.%s/python"
+	caVolumeNameAnnotation       = "cain.%s/ca-volume-name"
+	secretVolumeNameAnnotation   = "cain.%s/secret-volume-name" //nolint:gosec // Not a hardcoded credential G101
+	jvmCommonNameAnnotation      = "cain.%s/jvm-common-name"
+	truststorePasswordAnnotation = "cain.%s/truststore-password"
+	jvmPathAnnotation            = "cain.%s/jvm-path"
 
 	truststoreMountPath = "/jvm-truststore/"
 	truststorePath      = "truststore.jks"
@@ -64,15 +64,15 @@ func NewExtractor(domain, dnsDomain, truststorePassword string) Extractor {
 		dnsDomain:                    dnsDomain,
 		truststorePassword:           truststorePassword,
 		enabledLabel:                 fmt.Sprintf(enabledLabel, domain),
-		extraSecretsAnnotation:       extraSecretsAnnotation,
-		familyAnnotation:             familyAnnotation,
-		jvmAnnotation:                jvmAnnotation,
-		pythonAnnotation:             pythonAnnotation,
-		caVolumeNameAnnotation:       caVolumeNameAnnotation,
-		secretVolumeNameAnnotation:   secretVolumeNameAnnotation,
-		jvmCommonNameAnnotation:      jvmCommonNameAnnotation,
-		truststorePasswordAnnotation: truststorePasswordAnnotation,
-		jvmPathAnnotation:            jvmPathAnnotation,
+		extraSecretsAnnotation:       fmt.Sprintf(extraSecretsAnnotation, domain),
+		familyAnnotation:             fmt.Sprintf(familyAnnotation, domain),
+		jvmAnnotation:                fmt.Sprintf(jvmAnnotation, domain),
+		pythonAnnotation:             fmt.Sprintf(pythonAnnotation, domain),
+		caVolumeNameAnnotation:       fmt.Sprintf(caVolumeNameAnnotation, domain),
+		secretVolumeNameAnnotation:   fmt.Sprintf(secretVolumeNameAnnotation, domain),
+		jvmCommonNameAnnotation:      fmt.Sprintf(jvmCommonNameAnnotation, domain),
+		truststorePasswordAnnotation: fmt.Sprintf(truststorePasswordAnnotation, domain),
+		jvmPathAnnotation:            fmt.Sprintf(jvmPathAnnotation, domain),
 	}
 }
 
