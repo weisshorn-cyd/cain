@@ -127,7 +127,7 @@ func (cc *Creator) Start(ctx context.Context) error {
 				CommonName: certInfo.DNSNames[0],
 				DNSNames:   certInfo.DNSNames,
 				SecretName: SecretName(certInfo.PodName),
-				IssuerRef: cmMetav1.ObjectReference{
+				IssuerRef: cmMetav1.IssuerReference{
 					Name: cc.issuerName,
 					Kind: "ClusterIssuer",
 				},
