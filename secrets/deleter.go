@@ -2,14 +2,18 @@ package secrets
 
 import (
 	"context"
+	"errors"
 	"log/slog"
 
 	kErrors "k8s.io/apimachinery/pkg/api/errors"
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 	"k8s.io/apimachinery/pkg/runtime/schema"
 	"k8s.io/client-go/kubernetes"
+)
 
-	"github.com/weisshorn-cyd/cain/utils"
+var (
+	ErrNoLogger  = errors.New("logger cannot be nil")
+	ErrNoMetrics = errors.New("metrics cannot be nil")
 )
 
 // Deleter is responsible for deleting K8s secrets using information coming through a channel
@@ -44,11 +48,11 @@ func NewDeleter(
 	metrics DeleterMetrics,
 ) (*Deleter, chan<- DeletionRequest, error) {
 	if logger == nil {
-		return nil, nil, utils.ErrNoLogger
+		return nil, nil, ErrNoLogger
 	}
 
 	if metrics == nil {
-		return nil, nil, utils.ErrNoMetrics
+		return nil, nil, ErrNoMetrics
 	}
 
 	// create an unbuffered channel so that the separate goroutines are coordinated

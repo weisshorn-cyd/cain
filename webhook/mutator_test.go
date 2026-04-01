@@ -14,7 +14,6 @@ import (
 	testclient "k8s.io/client-go/kubernetes/fake"
 
 	"github.com/weisshorn-cyd/cain/metadata"
-	"github.com/weisshorn-cyd/cain/utils"
 	"github.com/weisshorn-cyd/cain/webhook"
 )
 
@@ -23,7 +22,7 @@ const caSecretName = "ca-pki-certs/tls.crt" //nolint:gosec // Not a hardcoded cr
 var (
 	mode           = int32(420)
 	controllerBool = true
-	caSecret       = &utils.CASecret{}
+	caSecret       = &webhook.CASecret{}
 )
 
 func TestCAInjectionMutator_Mutate(t *testing.T) {

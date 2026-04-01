@@ -3,6 +3,7 @@ package certificates
 import (
 	"context"
 	"encoding/base64"
+	"errors"
 	"fmt"
 	"log/slog"
 
@@ -15,7 +16,11 @@ import (
 	"k8s.io/client-go/rest"
 
 	"github.com/weisshorn-cyd/cain/secrets"
-	"github.com/weisshorn-cyd/cain/utils"
+)
+
+var (
+	ErrNoLogger  = errors.New("logger cannot be nil")
+	ErrNoMetrics = errors.New("metrics cannot be nil")
 )
 
 // Creator is responsible for creating cert manager certificates containing a truststore for
@@ -62,11 +67,11 @@ func NewCreator(
 	metrics CreatorMetrics,
 ) (*Creator, chan<- Info, error) {
 	if logger == nil {
-		return nil, nil, utils.ErrNoLogger
+		return nil, nil, ErrNoLogger
 	}
 
 	if metrics == nil {
-		return nil, nil, utils.ErrNoMetrics
+		return nil, nil, ErrNoMetrics
 	}
 
 	config, err := rest.InClusterConfig()

@@ -4,6 +4,7 @@ import (
 	"context"
 	"errors"
 	"fmt"
+	"strings"
 
 	corev1 "k8s.io/api/core/v1"
 	"k8s.io/apimachinery/pkg/api/resource"
@@ -11,11 +12,23 @@ import (
 	"k8s.io/client-go/kubernetes"
 )
 
-var ErrNoRootOwnerFound = errors.New("no root owner found")
+var (
+	ErrNoRootOwnerFound    = errors.New("no root owner found")
+	ErrMisformedSecretName = errors.New("malformed secret name")
+)
+
+const (
+	expectedCAParts = 2
+)
 
 type ContainerResources struct {
 	cpu    resources
 	memory resources
+}
+
+type CASecret struct {
+	name string
+	keys []string
 }
 
 type resources struct {
@@ -83,6 +96,33 @@ func (res *ContainerResources) ToK8S() corev1.ResourceRequirements {
 			corev1.ResourceMemory: res.memory.request,
 		},
 	}
+}
+
+func (cs *CASecret) UnmarshalText(text []byte) error {
+	caSecretSplit := strings.Split(string(text), "/")
+	if len(caSecretSplit) != expectedCAParts {
+		return ErrMisformedSecretName
+	}
+
+	secretName := caSecretSplit[0]
+	secretValue := caSecretSplit[1]
+
+	secretDataKeys := strings.Split(secretValue, ",")
+
+	*cs = CASecret{
+		name: secretName,
+		keys: secretDataKeys,
+	}
+
+	return nil
+}
+
+func (cs *CASecret) Name() string {
+	return cs.name
+}
+
+func (cs *CASecret) Keys() []string {
+	return cs.keys
 }
 
 // rootOwner tries to determine the rootOwner by recursively following owner references.

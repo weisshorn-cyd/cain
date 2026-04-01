@@ -15,7 +15,6 @@ import (
 	"github.com/weisshorn-cyd/cain/certificates"
 	"github.com/weisshorn-cyd/cain/metadata"
 	"github.com/weisshorn-cyd/cain/secrets"
-	"github.com/weisshorn-cyd/cain/utils"
 )
 
 var errUnsupportedOperation = errors.New("unsupported operation")
@@ -23,7 +22,7 @@ var errUnsupportedOperation = errors.New("unsupported operation")
 type Validator struct {
 	extractor        metadata.Extractor
 	client           kubernetes.Interface
-	caSecret         *utils.CASecret
+	caSecret         *CASecret
 	caSecretData     map[string][]byte
 	secCreationChan  chan<- secrets.CreationRequest
 	secDeletionChan  chan<- secrets.DeletionRequest
@@ -35,7 +34,7 @@ type Validator struct {
 func NewValidator(
 	extractor metadata.Extractor,
 	client kubernetes.Interface,
-	caSecret *utils.CASecret,
+	caSecret *CASecret,
 	caSecretData map[string][]byte,
 	secCreationChan chan<- secrets.CreationRequest,
 	secDeletionChan chan<- secrets.DeletionRequest,

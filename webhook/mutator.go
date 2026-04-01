@@ -16,7 +16,6 @@ import (
 
 	"github.com/weisshorn-cyd/cain/certificates"
 	"github.com/weisshorn-cyd/cain/metadata"
-	"github.com/weisshorn-cyd/cain/utils"
 )
 
 // various names used throughout the mutating webhook.
@@ -77,7 +76,7 @@ var errUnrecognisedFamily = errors.New("unrecognised family")
 type Mutator struct {
 	client             kubernetes.Interface
 	extractor          metadata.Extractor
-	caSecret           *utils.CASecret
+	caSecret           *CASecret
 	debianInitImage    string
 	redhatInitImage    string
 	jvmEnvVariable     string
@@ -90,7 +89,7 @@ type Mutator struct {
 func NewMutator(
 	extractor metadata.Extractor,
 	client kubernetes.Interface,
-	caSecret *utils.CASecret,
+	caSecret *CASecret,
 	debianInitImage, redhatInitImage, jvmEnvVariable string,
 	containerResources *ContainerResources,
 	logger *slog.Logger,
