@@ -11,9 +11,9 @@ require (
 	github.com/prometheus/common v0.67.5
 	github.com/slok/kubewebhook/v2 v2.7.0
 	github.com/sourcegraph/conc v0.3.0
-	k8s.io/api v0.35.3
-	k8s.io/apimachinery v0.35.3
-	k8s.io/client-go v0.35.3
+	k8s.io/api v0.35.4
+	k8s.io/apimachinery v0.35.4
+	k8s.io/client-go v0.35.4
 )
 
 require (
