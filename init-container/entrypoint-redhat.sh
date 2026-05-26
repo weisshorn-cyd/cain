@@ -1,10 +1,7 @@
 #!/usr/bin/env sh
 
-mkdir -p /etc/pki/ca-trust/extracted/openssl
-mkdir -p /etc/pki/ca-trust/extracted/pem
-mkdir -p /etc/pki/ca-trust/extracted/java
-mkdir -p /etc/pki/ca-trust/extracted/edk2
+TMP_CERTS_DIR="${TMP_CERTS_DIR:-/tmp/certs}"
 
-update-ca-trust
+update-ca-trust extract --output $TMP_CERTS_DIR
 
 exec "$@"

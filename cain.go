@@ -27,9 +27,9 @@ import (
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 	"k8s.io/client-go/kubernetes"
 	"k8s.io/client-go/rest"
+	"sigs.k8s.io/controller-runtime/pkg/certwatcher"
 
 	"github.com/weisshorn-cyd/cain/certificates"
-	localhttp "github.com/weisshorn-cyd/cain/http"
 	"github.com/weisshorn-cyd/cain/metadata"
 	"github.com/weisshorn-cyd/cain/metrics"
 	"github.com/weisshorn-cyd/cain/secrets"
@@ -44,6 +44,7 @@ type envConfig struct {
 	LogLevel           *slog.LevelVar    `default:"info"                                                                                                                                  desc:"The level to log at"                                                                         envconfig:"LOG_LEVEL"`
 	TLSCertFile        string            `default:"/run/secrets/tls/tls.crt"                                                                                                              desc:"Path to the file containing the TLS Certificate"                                             envconfig:"TLS_CERT_FILE"`
 	TLSKeyFile         string            `default:"/run/secrets/tls/tls.key"                                                                                                              desc:"Path to the file containing the TLS Key"                                                     envconfig:"TLS_KEY_FILE"`
+	TLSWatchInterval   time.Duration     `default:"10m"                                                                                                                                   desc:"How often to check HTTP server TLS certificates"                                             envconfig:"TLS_WATCH_INTERVAL"`
 	MetadataDomain     string            `default:"weisshorn.cyd"                                                                                                                         desc:"The domain of the labels and annotations, this can allow multiple instances of the injector" envconfig:"METADATA_DOMAIN"`
 	DNSDomain          string            `desc:"The TLD or most significant subdomain for use in the Certificates CN and DNSNames FQDN, only necessary if different from METADATA_DOMAIN" envconfig:"DNS_DOMAIN"`
 	CAIssuer           string            `desc:"The CA issuer to use when creating Certificate resources"                                                                                 envconfig:"CA_ISSUER"                                                                              required:"true"`
@@ -176,9 +177,9 @@ func run(env envConfig, log *slog.Logger) error { //nolint: cyclop,funlen // har
 
 	log.Info("initialised HTTP metrics server")
 
-	tlsCert, err := localhttp.NewReloadingTLSCert(env.TLSCertFile, env.TLSKeyFile, log)
+	watcher, err := certwatcher.New(env.TLSCertFile, env.TLSKeyFile)
 	if err != nil {
-		return fmt.Errorf("creating TLS certificate reloader: %w", err)
+		return fmt.Errorf("creating TLS cert watcher: %w", err)
 	}
 
 	whServer, err := setupWebhooks(ctx, webhookDependencies{
@@ -187,7 +188,7 @@ func run(env envConfig, log *slog.Logger) error { //nolint: cyclop,funlen // har
 		secDeletionChan:  secretDeletionChan,
 		certCreationChan: certCreatorChan,
 		promRegistry:     promRegistry,
-		tlsCert:          tlsCert,
+		certWatcher:      watcher,
 	}, env, log)
 	if err != nil {
 		return fmt.Errorf("setting up webhooks: %w", err)
@@ -205,7 +206,7 @@ func run(env envConfig, log *slog.Logger) error { //nolint: cyclop,funlen // har
 
 	// start the various goroutines within the context pool
 	ctxPool.Go(func(ctx context.Context) error {
-		if err := tlsCert.Start(ctx); err != nil {
+		if err := watcher.Start(ctx); err != nil {
 			log.ErrorContext(ctx, "TLS cert reloader", "error", err)
 
 			return fmt.Errorf("TLS cert reloader: %w", err)
@@ -306,7 +307,7 @@ type webhookDependencies struct {
 	secDeletionChan  chan<- secrets.DeletionRequest
 	certCreationChan chan<- certificates.Info
 	promRegistry     prometheus.Registerer
-	tlsCert          *localhttp.ReloadingTLSCert
+	certWatcher      *certwatcher.CertWatcher
 }
 
 func setupWebhooks( //nolint: cyclop,funlen // hard to reduce ifs that are mainly for err checking
@@ -435,7 +436,7 @@ func setupWebhooks( //nolint: cyclop,funlen // hard to reduce ifs that are mainl
 		Addr:    ":" + env.Port,
 		Handler: whMux,
 		TLSConfig: &tls.Config{
-			GetCertificate: deps.tlsCert.GetCertificate,
+			GetCertificate: deps.certWatcher.GetCertificate,
 			MinVersion:     tls.VersionTLS12,
 		},
 		ReadTimeout:  serverReadTimeout,

@@ -22,7 +22,7 @@ endif
 
 GO=go
 KO=ko
-BUILDAH=buildah
+BUILDAH?=buildah
 
 
 GOTOOL=$(GO) tool -modfile=$(TOOLSMOD)
