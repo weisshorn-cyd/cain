@@ -116,10 +116,16 @@ func TestCAInjectionMutator_Mutate(t *testing.T) {
 								},
 								{
 									Name:      "ca-certs",
-									MountPath: "/etc/ssl/certs/",
+									MountPath: "/tmp/ca-certs/",
 								},
 							},
 							Resources: k8sContainerResources,
+							Env: []corev1.EnvVar{
+								{
+									Name:  "TMP_CERTS_DIR",
+									Value: "/tmp/ca-certs/",
+								},
+							},
 						},
 					},
 					Volumes: []corev1.Volume{
@@ -245,10 +251,16 @@ func TestCAInjectionMutator_Mutate(t *testing.T) {
 								},
 								{
 									Name:      "ca-certs",
-									MountPath: "/etc/ssl/certs/",
+									MountPath: "/tmp/ca-certs/",
 								},
 							},
 							Resources: k8sContainerResources,
+							Env: []corev1.EnvVar{
+								{
+									Name:  "TMP_CERTS_DIR",
+									Value: "/tmp/ca-certs/",
+								},
+							},
 						},
 						{
 							Name:  "test-init-container",
@@ -349,10 +361,16 @@ func TestCAInjectionMutator_Mutate(t *testing.T) {
 								},
 								{
 									Name:      "ca-certs",
-									MountPath: "/etc/ssl/certs/",
+									MountPath: "/tmp/ca-certs/",
 								},
 							},
 							Resources: k8sContainerResources,
+							Env: []corev1.EnvVar{
+								{
+									Name:  "TMP_CERTS_DIR",
+									Value: "/tmp/ca-certs/",
+								},
+							},
 						},
 					},
 					Containers: []corev1.Container{
@@ -490,10 +508,16 @@ func TestCAInjectionMutator_Mutate(t *testing.T) {
 								},
 								{
 									Name:      "ca-certs",
-									MountPath: "/etc/ssl/certs/",
+									MountPath: "/tmp/ca-certs/",
 								},
 							},
 							Resources: k8sContainerResources,
+							Env: []corev1.EnvVar{
+								{
+									Name:  "TMP_CERTS_DIR",
+									Value: "/tmp/ca-certs/",
+								},
+							},
 						},
 					},
 					Volumes: []corev1.Volume{
@@ -617,10 +641,16 @@ func TestCAInjectionMutator_Mutate(t *testing.T) {
 								},
 								{
 									Name:      "my-new-ca-volume-name",
-									MountPath: "/etc/ssl/certs/",
+									MountPath: "/tmp/ca-certs/",
 								},
 							},
 							Resources: k8sContainerResources,
+							Env: []corev1.EnvVar{
+								{
+									Name:  "TMP_CERTS_DIR",
+									Value: "/tmp/ca-certs/",
+								},
+							},
 						},
 					},
 					Volumes: []corev1.Volume{
@@ -713,10 +743,16 @@ func TestCAInjectionMutator_Mutate(t *testing.T) {
 								},
 								{
 									Name:      "ca-certs",
-									MountPath: "/etc/ssl/certs/",
+									MountPath: "/tmp/ca-certs/",
 								},
 							},
 							Resources: k8sContainerResources,
+							Env: []corev1.EnvVar{
+								{
+									Name:  "TMP_CERTS_DIR",
+									Value: "/tmp/ca-certs/",
+								},
+							},
 						},
 					},
 					Containers: []corev1.Container{

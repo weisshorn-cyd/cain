@@ -26,7 +26,7 @@ const (
 
 const (
 	// path where the `update-ca-certificates` and `update-ca-trust` should generate/update the CA certs.
-	updateCAPath       = "/tmp/ca-certs"
+	updateCAPath       = "/tmp/ca-certs/"
 	updateCAPathEnvVar = "TMP_CERTS_DIR"
 )
 
