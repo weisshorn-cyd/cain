@@ -146,7 +146,7 @@ govulncheck: $(TOOLSMOD)
 	$(call go-install-tool,$(GOVULNCHECK),$(GOVULNCHECK_LOOKUP)@$(GOVULNCHECK_VERSION))
 
 GOLANGCI_LINT          := $(LOCALBIN)/golangci-lint
-GOLANGCI_LINT_VERSION  := 2.10.1
+GOLANGCI_LINT_VERSION  := 2.12.2
 golangci-lint: $(LOCALBIN)
 	@test -s $(GOLANGCI_LINT) && $(GOLANGCI_LINT) version | grep -q $(GOLANGCI_LINT_VERSION) || \
 	curl -sSfL https://raw.githubusercontent.com/golangci/golangci-lint/HEAD/install.sh | sh -s -- -b $(LOCALBIN) v$(GOLANGCI_LINT_VERSION)

@@ -61,7 +61,8 @@ linters:
             - k8s.io/client-go/rest
             - k8s.io/api/core/v1
             - k8s.io/api/apps/v1
-            - k8s.io/client-go/kubernete
+            - k8s.io/client-go/kubernetes
+            - sigs.k8s.io/controller-runtime/pkg/certwatcher
             - github.com/weisshorn-cyd/cain
             - github.com/cert-manager/cert-manager/pkg/apis
             - github.com/cert-manager/cert-manager/pkg/client/clientset/versioned
@@ -88,6 +89,7 @@ linters:
           - dupl
           - funlen
           - gochecknoglobals
+          - goconst
         path: _test\.go
       - linters:
           - lll
