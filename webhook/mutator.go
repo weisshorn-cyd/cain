@@ -24,6 +24,12 @@ const (
 	caTruststoreVolumeName = "cain-truststore"
 )
 
+const (
+	// path where the `update-ca-certificates` and `update-ca-trust` should generate/update the CA certs.
+	updateCAPath       = "/tmp/ca-certs/"
+	updateCAPathEnvVar = "TMP_CERTS_DIR"
+)
+
 // locations used by debian like OSes for TLS certs.
 const (
 	// location for adding new certs.
@@ -325,10 +331,21 @@ func (mut *Mutator) addCASecretVolumes(
 		Name: caCompleteVolumeName,
 	}
 
+	initCAVolumeMount := corev1.VolumeMount{
+		Name:      caCompleteVolumeName,
+		MountPath: updateCAPath,
+	}
+
 	// create the container object for the init container
 	caInitContainer := corev1.Container{
 		Name:      caInitContainerName,
 		Resources: mut.containerResources.ToK8S(),
+		Env: []corev1.EnvVar{
+			{
+				Name:  updateCAPathEnvVar,
+				Value: updateCAPath,
+			},
+		},
 	}
 
 	switch mut.extractor.Family(pod) {
@@ -345,7 +362,7 @@ func (mut *Mutator) addCASecretVolumes(
 	// add the volume mounts to the CA injection init container
 	caInitContainer.VolumeMounts = []corev1.VolumeMount{
 		caSecretVolumeMount,
-		completeCAVolumeMount,
+		initCAVolumeMount,
 	}
 
 	// add the root CA bundle volume to the other existing init containers

@@ -65,23 +65,24 @@ Currently, the following OS-families are supported:
 
 ## Environment variables
 
-| NAME               | VARIABLE            | TYPE            | DEFAULT                                | DESCRIPTION                                                                                 |
-|--------------------|---------------------|-----------------|----------------------------------------|---------------------------------------------------------------------------------------------|
-| Port               | PORT                | string          | 8443                                   | The webhook HTTPS port                                                                      |
-| MetricsPort        | METRICS_PORT        | string          | 8080                                   | The metrics HTTP port                                                                       |
-| LogLevel           | LOG_LEVEL           | *slog.LevelVar  | info                                   | The level to log at                                                                         |
-| TLSCertFile        | TLS_CERT_FILE       | string          | /run/secrets/tls/tls.crt               | Path to the file containing the TLS Certificate                                             |
-| TLSKeyFile         | TLS_KEY_FILE        | string          | /run/secrets/tls/tls.key               | Path to the file containing the TLS Key                                                     |
-| MetadataDomain     | METADATA_DOMAIN     | string          | weisshorn.cyd                          | The domain of the labels and annotations, this can allow multiple instances of the injector |
-| CAIssuer           | CA_ISSUER           | string          |                                        | The CA issuer to use when creating Certificate resources                                    |
-| CASecret           | CA_SECRET           | *utils.CASecret |                                        | The default CA secret to use, with the key of the CA, <secret name>/<CA key>[,<CA key>...]  |
-| TruststorePassword | TRUSTSTORE_PASSWORD | string          |                                        | The password to use for the JVM truststore                                                  |
-| JVMEnvVariable     | JVM_ENV_VAR         | string          |                                        | The ENV variable to use for JVM containers                                                  |
-| RedHatInitImage    | REDHAT_INIT_IMAGE   | string          | ghcr.io/weisshorn-cyd/cain-redhat-init | The container image to use for the RedHat family init containers                            |
-| RedHatInitTag      | REDHAT_INIT_TAG     | string          |                                        | The container image tag to use for the RedHat family init containers                        |
-| DebianInitImage    | DEBIAN_INIT_IMAGE   | string          | ghcr.io/weisshorn-cyd/cain-debian-init | The container image to use for the Debian family init containers                            |
-| DebianInitTag      | DEBIAN_INIT_TAG     | string          |                                        | The container image tag to use for the Debian family init containers                        |
-| MetricsSubsystem   | METRICS_SUBSYSTEM   | string          |                                        | The subsystem for the metrics                                                               |
+| NAME               | VARIABLE            | TYPE              | DEFAULT                                | DESCRIPTION                                                                                 |
+|--------------------|---------------------|-------------------|----------------------------------------|---------------------------------------------------------------------------------------------|
+| Port               | PORT                | string            | 8443                                   | The webhook HTTPS port                                                                      |
+| MetricsPort        | METRICS_PORT        | string            | 8080                                   | The metrics HTTP port                                                                       |
+| LogLevel           | LOG_LEVEL           | *slog.LevelVar    | info                                   | The level to log at                                                                         |
+| TLSCertFile        | TLS_CERT_FILE       | string            | /run/secrets/tls/tls.crt               | Path to the file containing the TLS Certificate                                             |
+| TLSKeyFile         | TLS_KEY_FILE        | string            | /run/secrets/tls/tls.key               | Path to the file containing the TLS Key                                                     |
+| TLSWatchInterval   | TLS_WATCH_INTERVAL  | time.Duration     | 10m                                    | How often to check HTTP server TLS certs                                                    |
+| MetadataDomain     | METADATA_DOMAIN     | string            | weisshorn.cyd                          | The domain of the labels and annotations, this can allow multiple instances of the injector |
+| CAIssuer           | CA_ISSUER           | string            |                                        | The CA issuer to use when creating Certificate resources                                    |
+| CASecret           | CA_SECRET           | *webhook.CASecret |                                        | The default CA secret to use, with the key of the CA, <secret name>/<CA key>[,<CA key>...]  |
+| TruststorePassword | TRUSTSTORE_PASSWORD | string            |                                        | The password to use for the JVM truststore                                                  |
+| JVMEnvVariable     | JVM_ENV_VAR         | string            |                                        | The ENV variable to use for JVM containers                                                  |
+| RedHatInitImage    | REDHAT_INIT_IMAGE   | string            | ghcr.io/weisshorn-cyd/cain-redhat-init | The container image to use for the RedHat family init containers                            |
+| RedHatInitTag      | REDHAT_INIT_TAG     | string            |                                        | The container image tag to use for the RedHat family init containers                        |
+| DebianInitImage    | DEBIAN_INIT_IMAGE   | string            | ghcr.io/weisshorn-cyd/cain-debian-init | The container image to use for the Debian family init containers                            |
+| DebianInitTag      | DEBIAN_INIT_TAG     | string            |                                        | The container image tag to use for the Debian family init containers                        |
+| MetricsSubsystem   | METRICS_SUBSYSTEM   | string            |                                        | The subsystem for the metrics                                                               |
 
 
 ## Note for python users

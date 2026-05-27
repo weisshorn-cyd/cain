@@ -3,5 +3,6 @@ FROM --platform=$BUILDPLATFORM debian:stable@sha256:37ad77961af28800b00f5f96a4df
 RUN apt-get update && apt-get install -y ca-certificates --no-install-recommends && \
     rm -rf /var/lib/apt/lists/*
 
+USER nobody
 COPY entrypoint-debian.sh /entrypoint
 ENTRYPOINT [ "/entrypoint" ]
