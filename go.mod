@@ -11,7 +11,7 @@ require (
 	github.com/slok/kubewebhook/v2 v2.7.0
 	github.com/sourcegraph/conc v0.3.0
 	k8s.io/api v0.36.1
-	k8s.io/apimachinery v0.36.1
+	k8s.io/apimachinery v0.36.2
 	k8s.io/client-go v0.36.1
 	sigs.k8s.io/controller-runtime v0.24.1
 )
