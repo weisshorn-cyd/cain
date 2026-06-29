@@ -13,6 +13,7 @@ import (
 	"syscall"
 	"time"
 
+	"github.com/go-logr/logr"
 	"github.com/kelseyhightower/envconfig"
 	"github.com/prometheus/client_golang/prometheus"
 	"github.com/prometheus/client_golang/prometheus/promhttp"
@@ -28,6 +29,7 @@ import (
 	"k8s.io/client-go/kubernetes"
 	"k8s.io/client-go/rest"
 	"sigs.k8s.io/controller-runtime/pkg/certwatcher"
+	k8sLog "sigs.k8s.io/controller-runtime/pkg/log"
 
 	"github.com/weisshorn-cyd/cain/certificates"
 	"github.com/weisshorn-cyd/cain/metadata"
@@ -88,6 +90,7 @@ func main() {
 	)
 
 	logger := slog.New(handler)
+	k8sLog.SetLogger(logr.FromSlogHandler(handler))
 
 	if err := run(env, logger); err != nil {
 		logger.Error("error running cain webhook", "error", err)
