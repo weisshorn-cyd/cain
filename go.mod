@@ -7,7 +7,7 @@ require (
 	github.com/go-logr/logr v1.4.4
 	github.com/kelseyhightower/envconfig v1.4.0
 	github.com/matryer/is v1.4.1
-	github.com/prometheus/client_golang v1.24.0
+	github.com/prometheus/client_golang v1.24.1
 	github.com/prometheus/common v0.70.1
 	github.com/slok/kubewebhook/v2 v2.7.0
 	github.com/sourcegraph/conc v0.3.0
