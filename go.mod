@@ -3,7 +3,7 @@ module github.com/weisshorn-cyd/cain
 go 1.26.0
 
 require (
-	github.com/cert-manager/cert-manager v1.21.0
+	github.com/cert-manager/cert-manager v1.21.1
 	github.com/go-logr/logr v1.4.4
 	github.com/kelseyhightower/envconfig v1.4.0
 	github.com/matryer/is v1.4.1
