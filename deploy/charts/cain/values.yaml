@@ -68,6 +68,11 @@ serviceAccount:
   # If not set and create is true, a name is generated using the fullname template
   name: ""
 
+# Annotations on the Deployment
+annotations: {}
+  # reloader.stakater.com/auto: "true"
+
+# Annotations on the Pod(s)
 podAnnotations: {}
 
 # ExternalSecret configuration instead of a dummy certificate.
